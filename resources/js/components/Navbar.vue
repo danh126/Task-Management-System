@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand">Navbar</a>
             <button
                 class="navbar-toggler"
                 type="button"
@@ -16,17 +16,41 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <router-link
-                        to="/home"
+                        to="/spa/home"
                         class="nav-link active"
                         aria-current="page"
-                        >Trang chủ</router-link
-                    >
-                    <a class="nav-link" href="#">Dự án</a>
-                    <a class="nav-link" href="#">Nhiệm vụ</a>
+                        >Trang chủ
+                    </router-link>
+                    <router-link to="/spa/projects" class="nav-link"
+                        >Dự án
+                    </router-link>
+                    <router-link to="/spa/tasks" class="nav-link"
+                        >Nhiệm vụ
+                    </router-link>
                 </div>
             </div>
-            <div>
-                <button @click="logout">Đăng xuất</button>
+
+            <!-- Dropdown -->
+            <div class="dropdown">
+                <a
+                    class="btn btn-secondary dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    Dropdown link
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" @click="logout">Đăng xuất</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -39,9 +63,9 @@ import { useRouter } from "vue-router";
 const logout = async () => {
     try {
         await axios.post("/logout");
-        router.push("/login");
+        window.location.href = "/";
     } catch (error) {
-        console.error(error);
+        // console.error(error);
     }
 };
 </script>
