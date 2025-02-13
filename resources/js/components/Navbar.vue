@@ -17,15 +17,29 @@
                 <div class="navbar-nav">
                     <router-link
                         to="/spa/home"
-                        class="nav-link active"
+                        class="nav-link"
+                        exact-active-class="active"
                         aria-current="page"
                         >Trang chủ
                     </router-link>
-                    <router-link to="/spa/projects" class="nav-link"
+                    <router-link
+                        to="/spa/projects"
+                        class="nav-link"
+                        exact-active-class="active"
                         >Dự án
                     </router-link>
-                    <router-link to="/spa/tasks" class="nav-link"
+                    <router-link
+                        to="/spa/tasks"
+                        class="nav-link"
+                        exact-active-class="active"
                         >Nhiệm vụ
+                    </router-link>
+                    <router-link
+                        to="/spa/users"
+                        v-if="user?.role == 'admin'"
+                        class="nav-link"
+                        exact-active-class="active"
+                        >Quản lý tài khoản
                     </router-link>
                 </div>
             </div>
@@ -39,14 +53,11 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                 >
-                    Dropdown link
+                    {{ user?.name }} - {{ user?.role }}
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li>
-                        <a class="dropdown-item" href="#">Another action</a>
-                    </li>
+                    <li><a class="dropdown-item" href="#">Thông tin</a></li>
                     <li>
                         <a class="dropdown-item" @click="logout">Đăng xuất</a>
                     </li>
@@ -58,16 +69,26 @@
 
 <script setup>
 import axios from "axios";
+import { ref, onMounted } from "vue";
+
 import { useRouter } from "vue-router";
+
+const user = ref(JSON.parse(localStorage.getItem("user")) || null);
 
 const logout = async () => {
     try {
         await axios.post("/logout");
         window.location.href = "/";
     } catch (error) {
-        // console.error(error);
+        console.error(error);
     }
 };
+
+// console.log(user.value.name);
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.active {
+    font-weight: bold;
+}
+</style>

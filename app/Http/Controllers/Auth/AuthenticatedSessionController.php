@@ -29,7 +29,8 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Lưu user vào session để gửi sang vue
-        session(['user' => Auth::user()]);
+        // session(['user' => Auth::user()]);
+        $request->session()->put('user',Auth::user());
 
         return redirect()->intended(route('spa', absolute: false));
     }
