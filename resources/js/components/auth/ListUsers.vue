@@ -1,17 +1,12 @@
 <template>
     <div>
-        <CreateAccount
-            v-if="createAccount"
-            :createAccount="createAccount"
-            :listRoles="listRoles"
-            @update-createAccount="updateCreateAccount"
-        />
+        <CreateAccount v-if="authStore.createAccount" />
 
         <h3 class="mt-2 mb-2 text-center">Danh sách người dùng</h3>
         <button
             class="btn btn-success mb-2"
-            v-if="!createAccount"
-            @click="createAccount = true"
+            v-if="!authStore.createAccount"
+            @click="authStore.createAccount = true"
         >
             Tạo tài khoản
         </button>
@@ -28,7 +23,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(user, index) in listUsers" :key="user?.id">
+                <tr
+                    v-for="(user, index) in authStore.listUsers"
+                    :key="user?.id"
+                >
                     <td scope="row">{{ user?.id }}</td>
 
                     <td>{{ user?.name }}</td>
@@ -36,9 +34,12 @@
 
                     <td v-if="!user.isEdit">{{ user?.role }}</td>
                     <td v-else>
-                        <select class="form-select" v-model="selectedUser.role">
+                        <select
+                            class="form-select"
+                            v-model="authStore.selectedUser.role"
+                        >
                             <option
-                                v-for="role in listRoles"
+                                v-for="role in authStore.listRoles"
                                 :value="role.name"
                                 :key="role.name"
                             >
@@ -48,19 +49,19 @@
                     </td>
 
                     <!-- Button thực hiện tác vụ -->
-                    <td v-if="!user.isEdit && !createAccount">
+                    <td v-if="!user.isEdit && !authStore.createAccount">
                         <buttonn
                             class="btn btn-primary me-2"
-                            @click="findUser(user)"
+                            @click="authStore.findUser(user)"
                             >Phân quyền
                         </buttonn>
                         <button class="btn btn-danger">Xóa</button>
                     </td>
 
-                    <td v-else-if="!createAccount">
+                    <td v-else-if="!authStore.createAccount">
                         <button
                             class="btn btn-primary me-2"
-                            @click="updateRole(index)"
+                            @click="authStore.updateRole(index)"
                         >
                             Cập nhật
                         </button>
@@ -78,59 +79,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
+import { useAuthStore } from "../../stores/authStore";
 import CreateAccount from "./CreateAccount.vue";
-import axios from "axios";
 
-const listRoles = ref([
-    { name: "admin" },
-    { name: "manager" },
-    { name: "employee" },
-]);
+const authStore = useAuthStore();
 
-const listUsers = ref([]);
-const selectedUser = ref(null);
-const createAccount = ref(false);
-
-onMounted(async () => {
-    try {
-        const response = await axios.get("/users");
-        listUsers.value = response.data;
-
-        listUsers.value.forEach((item) => {
-            item.isEdit = false;
-        });
-    } catch (error) {
-        console.log(error);
-    }
+onMounted(() => {
+    authStore.getListUsers();
 });
-
-// Lấy user được chọn
-const findUser = (user) => {
-    user.isEdit = true;
-    selectedUser.value = { ...user };
-};
-
-// Hàm nhận sự kiện update từ component con
-const updateCreateAccount = (value) => {
-    createAccount.value = value;
-};
-
-// Hàm update role
-const updateRole = async (index) => {
-    try {
-        const response = await axios.put("/users/" + selectedUser.value.id, {
-            role: selectedUser.value.role,
-        });
-
-        // Cập nhật lại listUsers ở row vừa update
-        Object.assign(listUsers.value[index], {
-            role: response.data.user.role,
-            isEdit: false,
-        });
-    } catch (error) {
-        // console.log(error);
-    }
-};
 </script>
+
 <style lang="scss" scoped></style>

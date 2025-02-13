@@ -1,15 +1,13 @@
 import "./bootstrap";
 
-// import Alpine from "alpinejs";
-import { createApp } from "vue";
+import { createApp } from "vue"; // thư viện vue-router
+import { createPinia } from "pinia"; // thư viện pinia (store)
+
 import App from "./components/App.vue";
 import router from "./router";
 
-// window.Alpine = Alpine;
-
-// Alpine.start();
-
 const app = createApp(App);
 app.use(router);
+app.use(createPinia());
 
 app.mount("#app");
