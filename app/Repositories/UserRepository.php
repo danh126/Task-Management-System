@@ -17,7 +17,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getUsers()
     {
-        return $this->user->all();
+        return $this->user->paginate(5);
     }
 
     public function getUser($userId)
@@ -25,9 +25,26 @@ class UserRepository implements UserRepositoryInterface
         //
     }
 
-    public function createUser()
+    public function createUser(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'role' => ['required','string','max:10']
+        ],[
+            'email.email' => 'Vui lòng nhập đúng định dạng Email!',
+            'email.unique' => 'Email đã tồn tại trong hệ thống!'
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt('123456789'),
+            'email_verified_at' => time(),
+            'role' => $request->role
+        ]);
+
+        return $user;
     }
 
     public function updateUser($userId, Request $request)
@@ -40,8 +57,9 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function deleteUser($userId, Request $request)
+    public function deleteUser($userId)
     {
-        //
+        $user = User::where('id',$userId)->delete();
+        return $user;
     }
 }

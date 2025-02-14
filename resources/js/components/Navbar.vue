@@ -36,7 +36,7 @@
                     </router-link>
                     <router-link
                         to="/spa/users"
-                        v-if="user?.role == 'admin'"
+                        v-if="authStore.user.role == 'admin'"
                         class="nav-link"
                         exact-active-class="active"
                         >Quản lý tài khoản
@@ -53,13 +53,15 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                 >
-                    {{ user?.name }} - {{ user?.role }}
+                    {{ authStore.user.name }} - {{ authStore.user.role }}
                 </a>
 
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="#">Thông tin</a></li>
                     <li>
-                        <a class="dropdown-item" @click="logout">Đăng xuất</a>
+                        <a class="dropdown-item" @click="authStore.logout"
+                            >Đăng xuất
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -70,21 +72,9 @@
 <script setup>
 import axios from "axios";
 import { ref, onMounted } from "vue";
+import { useAuthStore } from "../stores/authStore";
 
-import { useRouter } from "vue-router";
-
-const user = ref(JSON.parse(localStorage.getItem("user")) || null);
-
-const logout = async () => {
-    try {
-        await axios.post("/logout");
-        window.location.href = "/";
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-// console.log(user.value.name);
+const authStore = useAuthStore();
 </script>
 
 <style scoped>

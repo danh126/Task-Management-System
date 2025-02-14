@@ -1,6 +1,15 @@
 <template>
     <div>
         <h3 class="text-center">Tạo tài khoản mới</h3>
+
+        <div
+            :class="['alert', authStore.alertType]"
+            role="alert"
+            v-if="authStore.notification !== null"
+        >
+            {{ authStore.notification.message }}
+        </div>
+
         <label for="name">Tên tài khoản</label>
         <input
             type="text"
@@ -24,7 +33,11 @@
             </option>
         </select>
         <div class="text-center">
-            <button class="btn btn-primary mt-2 me-2" @click="">
+            <button
+                class="btn btn-primary mt-2 me-2"
+                :disabled="!authStore.isFormValid"
+                @click="authStore.createAccount"
+            >
                 Tạo tài khoản
             </button>
             <button

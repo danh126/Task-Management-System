@@ -22,7 +22,11 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        //
+       $user = $this->userRepository->createUser($request);
+
+       return response([
+        'user' => $user
+       ]);
     }
 
     public function show(string $id)
@@ -41,6 +45,10 @@ class UserController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        $user = $this->userRepository->deleteUser($id);
+
+        return response([
+            'result' => $user
+        ]);
     }
 }

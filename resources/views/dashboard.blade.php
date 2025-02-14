@@ -5,9 +5,6 @@
     </div>
 
     <script>
-        var user = @json(auth()->user()); // Lấy user từ Laravel
-        if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-        }
+        window.__user__ = @json(auth()->user()); 
     </script>    
 @endsection

@@ -6,11 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Hệ thống quản lý công việc | NTD</title>
 
-    <!-- URL CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+    <!-- Bootstrap CSS (dùng jsDelivr) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
-     <!-- Scripts -->
-     @vite(['resources/js/app.js'])
+    <!-- Laravel Vite -->
+    @vite(['resources/js/app.js'])
 </head>
 <body>
     <div class="container-fluid">
@@ -19,8 +19,7 @@
        </main>
     </div>
 
-    <!-- URL CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

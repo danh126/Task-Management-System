@@ -1,24 +1,49 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import axios from "axios";
 
 export const useAuthStore = defineStore("authStore", () => {
-    // List Users
+    // Define
+    const user = ref(window.__user__);
+    const listUsers = ref({});
+    const selectedUser = ref(null);
+    const clickCreateAccount = ref(false);
+    const click = ref(false);
+    const deleteUser = ref(null);
+    const getIndexDel = ref(null);
+
+    const alertType = ref("alert-danger");
+    const notification = ref(null);
+
+    const account = ref({
+        name: "",
+        email: "",
+        role: "",
+    });
+
     const listRoles = ref([
         { name: "admin" },
         { name: "manager" },
         { name: "employee" },
     ]);
 
-    const listUsers = ref([]);
-    const selectedUser = ref(null);
-    const createAccount = ref(false);
-
-    const getListUsers = async () => {
+    // Logout account
+    const logout = async () => {
         try {
-            const response = await axios.get("/users");
+            await axios.post("/logout");
+            window.location.href = "/";
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // List Users
+    const getListUsers = async (page = 1) => {
+        try {
+            const response = await axios.get("/users?page=" + page);
             listUsers.value = response.data;
 
-            listUsers.value.forEach((item) => {
+            listUsers.value.data.forEach((item) => {
                 item.isEdit = false;
             });
         } catch (error) {
@@ -26,9 +51,10 @@ export const useAuthStore = defineStore("authStore", () => {
         }
     };
 
-    // Lấy user được chọn
+    // Hàm lấy user được chọn
     const findUser = (user) => {
         user.isEdit = true;
+        click.value = true;
         selectedUser.value = { ...user };
     };
 
@@ -43,25 +69,20 @@ export const useAuthStore = defineStore("authStore", () => {
             );
 
             // Cập nhật lại listUsers ở row vừa update
-            Object.assign(listUsers.value[index], {
+            Object.assign(listUsers.value.data[index], {
                 role: response.data.user.role,
                 isEdit: false,
             });
+
+            click.value = false;
         } catch (error) {
-            // console.log(error);
+            console.log(error);
         }
     };
 
-    // Create Account
-    const account = ref({
-        name: "",
-        email: "",
-        role: "",
-    });
-
     // Hàm close form create account
     const closeCreateAccount = () => {
-        createAccount.value = false;
+        clickCreateAccount.value = false;
 
         // Clear form
         account.value = {
@@ -71,17 +92,94 @@ export const useAuthStore = defineStore("authStore", () => {
         };
     };
 
-    // getListUsers(); // gọi trực tiếp trong store hoặc gọi ở component
+    // Hàm click xóa tài khoản
+    const clickDeleteUser = (user, index) => {
+        click.value = true;
+        getIndexDel.value = index;
+        deleteUser.value = { ...user };
+    };
+
+    // Hàm xác nhận xóa tài khoản
+    const confirmDelUser = async () => {
+        try {
+            await axios.delete("/users/" + deleteUser.value.id);
+            listUsers.value.data.splice(getIndexDel.value, 1);
+
+            getIndexDel.value = null;
+            click.value = false;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // Hàm validatedForm
+    const isFormValid = computed(() => {
+        return (
+            account.value.name !== "" &&
+            account.value.email !== "" &&
+            account.value.role !== ""
+        );
+    });
+
+    // Hàm thêm tài khoản mới
+    const createAccount = async () => {
+        try {
+            const response = await axios.post("/users", {
+                name: account.value.name,
+                email: account.value.email,
+                role: account.value.role,
+            });
+
+            // Thông báo tạo tài khoản thành công
+            alertType.value = "alert-success";
+            notification.value = { message: "Tạo tài khoản thành công!" };
+
+            // Thoát form và clear text
+            account.value = {
+                name: "",
+                email: "",
+                role: "",
+            };
+
+            setTimeout(() => {
+                notification.value = null;
+                clickCreateAccount.value = false;
+            }, 2000);
+
+            // Thêm tài khoản vừa tạo vào đầu danh sách
+            listUsers.value.data.unshift({
+                ...response.data.user,
+                isEdit: false,
+            });
+        } catch (error) {
+            notification.value = error.response.data;
+            setTimeout(() => {
+                notification.value = null;
+            }, 2000);
+        }
+    };
+
+    //getListUsers(); // gọi trực tiếp trong store hoặc gọi ở component
 
     return {
         listRoles,
         listUsers,
         getListUsers,
         selectedUser,
-        createAccount,
+        clickCreateAccount,
         findUser,
         updateRole,
         account,
         closeCreateAccount,
+        user,
+        logout,
+        click,
+        deleteUser,
+        clickDeleteUser,
+        confirmDelUser,
+        createAccount,
+        isFormValid,
+        alertType,
+        notification,
     };
 });
