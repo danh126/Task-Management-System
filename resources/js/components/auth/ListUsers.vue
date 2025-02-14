@@ -147,7 +147,7 @@
             {{ authStore.listUsers.from }} - {{ authStore.listUsers.to }} of
             {{ authStore.listUsers.total }}
         </div>
-        <ul class="pagination">
+        <ul class="pagination mt-2 mb-2">
             <li
                 class="page-item"
                 :class="{
@@ -160,7 +160,7 @@
                         )
                 "
             >
-                <a class="page-link" href="#">Previous</a>
+                <a class="page-link" href="#"><</a>
             </li>
             <li
                 class="page-item"
@@ -201,7 +201,7 @@
                         )
                 "
             >
-                <a class="page-link" href="#">Next</a>
+                <a class="page-link" href="#">></a>
             </li>
         </ul>
     </div>
