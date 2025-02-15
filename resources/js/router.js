@@ -1,14 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "./components/Home.vue";
-import Projects from "./components/Project.vue";
+import Projects from "./components/project/Project.vue";
 import Tasks from "./components/Task.vue";
 import ListUsers from "./components/auth/ListUsers.vue";
 import Profile from "./components/auth/Profile.vue";
+import DetailProoject from "./components/project/DetailProject.vue";
 
 const routes = [
     { path: "/spa", component: Home },
+
     { path: "/spa/projects", component: Projects },
+    { path: "/spa/projects/:id", component: DetailProoject },
+
     { path: "/spa/tasks", component: Tasks },
+
     { path: "/spa/users", component: ListUsers },
     { path: "/spa/users/profile", component: Profile },
 ];

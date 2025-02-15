@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    protected UserRepositoryInterface $userRepository;
+    protected $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository)
     {

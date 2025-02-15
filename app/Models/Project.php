@@ -16,4 +16,20 @@ class Project extends Model
     public function tasks(){
         return $this->hasMany(Task::class);
     }
+
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'date',
+            'end_date' => 'date',
+        ];
+    }
+
+    // Định dạng lại date
+    protected $dates = ['start_date', 'end_date'];
+
+    public function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
 }

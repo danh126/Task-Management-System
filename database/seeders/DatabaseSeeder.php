@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        // User::factory(10)->create();
 
         // $users = [
         //     [
@@ -36,6 +36,9 @@ class DatabaseSeeder extends Seeder
         //     User::factory()->create($user);
         // }
 
-        echo "Insert user success";
+        // echo "Insert user success";
+        $this->call([
+            ProjectSeeder::class
+        ]);
     }
 }

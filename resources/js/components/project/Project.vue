@@ -1,0 +1,159 @@
+<template>
+    <div>
+        <h3 class="mt-2 mb-2 text-center">Danh sách dự án</h3>
+        <div class="accordion" id="accordionExample">
+            <div
+                class="accordion-item"
+                v-for="(project, index) in projectStore.listProjects.data"
+                :key="project.id"
+            >
+                <h2 class="accordion-header">
+                    <button
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        :data-bs-target="`#project-${project.id}`"
+                        aria-expanded="true"
+                        :aria-controls="`project-${project.id}`"
+                    >
+                        {{ project.name }} >
+                        <span :class="projectStore.getClassByStatus(project)">{{
+                            project.status
+                        }}</span>
+                    </button>
+                </h2>
+                <div
+                    :id="`project-${project.id}`"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#accordionExample"
+                >
+                    <div class="accordion-body">
+                        <p>{{ project.description }}</p>
+                        <button
+                            class="btn btn-primary me-2"
+                            @click="projectStore.viewDetailProject(project.id)"
+                        >
+                            Chi tiết
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phân trang -->
+        <div>
+            {{ projectStore.listProjects.from }} -
+            {{ projectStore.listProjects.to }} of
+            {{ projectStore.listProjects.total }}
+        </div>
+        <ul class="pagination mt-2 mb-2">
+            <li
+                class="page-item"
+                :class="{
+                    disabled: projectStore.listProjects.prev_page_url === null,
+                }"
+                @click="
+                    projectStore.listProjects.prev_page_url &&
+                        projectStore.getListProjects(
+                            projectStore.listProjects.current_page - 1
+                        )
+                "
+            >
+                <a class="page-link" href="#"><</a>
+            </li>
+            <li
+                class="page-item"
+                v-if="projectStore.listProjects.prev_page_url"
+                @click="
+                    projectStore.getListProjects(
+                        projectStore.listProjects.current_page - 1
+                    )
+                "
+            >
+                <a class="page-link" href="#">{{
+                    projectStore.listProjects.current_page - 1
+                }}</a>
+            </li>
+            <li class="page-item active">
+                <a class="page-link" href="#">{{
+                    projectStore.listProjects.current_page
+                }}</a>
+            </li>
+            <li
+                class="page-item"
+                v-if="projectStore.listProjects.next_page_url"
+                @click="
+                    projectStore.getListProjects(
+                        projectStore.listProjects.current_page + 1
+                    )
+                "
+            >
+                <a class="page-link" href="#">{{
+                    projectStore.listProjects.current_page + 1
+                }}</a>
+            </li>
+            <li
+                class="page-item"
+                :class="{
+                    disabled: projectStore.listProjects.next_page_url === null,
+                }"
+                @click="
+                    projectStore.listProjects.next_page_url &&
+                        projectStore.getListProjects(
+                            projectStore.listProjects.current_page + 1
+                        )
+                "
+            >
+                <a class="page-link" href="#">></a>
+            </li>
+        </ul>
+    </div>
+</template>
+
+<script setup>
+import { useProjectStore } from "../../stores/projectStore";
+import { onMounted } from "vue";
+
+const projectStore = useProjectStore();
+
+onMounted(() => {
+    projectStore.getListProjects();
+});
+</script>
+
+<style scoped>
+.accordion-button {
+    background-color: white !important;
+    color: black !important;
+}
+
+.pending {
+    background-color: #fff3cd;
+    color: rgb(0, 0, 0);
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    height: 25px;
+    width: 80px;
+}
+
+.in_progress {
+    background-color: #cce5ff;
+    color: rgb(0, 0, 0);
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    height: 25px;
+    width: 90px;
+}
+
+.completed {
+    background-color: #d4edda;
+    color: rgb(0, 0, 0);
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    height: 25px;
+    width: 80px;
+}
+</style>
