@@ -14,6 +14,8 @@
         <!-- Chi tiết dự án -->
         <div class="project-details">
             <h3>Chi tiết dự án</h3>
+
+            <!-- Thông báo -->
             <div
                 :class="['alert', projectStore.alertType]"
                 role="alert"

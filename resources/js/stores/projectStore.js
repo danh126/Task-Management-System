@@ -12,6 +12,16 @@ export const useProjectStore = defineStore("projectStore", () => {
     const router = useRouter();
     const clickUpdate = ref(false);
 
+    const clickCreate = ref(false);
+    const project = ref({
+        name: "",
+        description: "",
+        start_date: "",
+        end_date: "",
+        manager_id: "",
+    });
+    const listManagers = ref([]);
+
     // Thông báo
     const alertType = ref(null);
     const notification = ref(null);
@@ -116,6 +126,75 @@ export const useProjectStore = defineStore("projectStore", () => {
         }
     };
 
+    // Hàm close form create project
+    const closeForm = () => {
+        clickCreate.value = false;
+        project.value = {
+            name: "",
+            description: "",
+            start_date: "",
+            end_date: "",
+            manager_id: "",
+        };
+    };
+
+    // Hàm lấy danh sách managers
+    const getListManagers = async () => {
+        try {
+            const response = await axios.get("/managers");
+            listManagers.value = response.data;
+        } catch (error) {
+            console.log(error.response.data);
+        }
+    };
+
+    // Hàm validate form
+    const isValidated = computed(() => {
+        return (
+            project.value.name !== "" &&
+            project.value.description !== "" &&
+            project.value.start_date !== "" &&
+            project.value.end_date !== "" &&
+            project.value.manager_id !== ""
+        );
+    });
+
+    // Hàm tạo dự án mới
+    const createProject = async () => {
+        try {
+            const response = await axios.post("/projects", {
+                name: project.value.name,
+                description: project.value.description,
+                start_date: project.value.start_date,
+                end_date: project.value.end_date,
+                manager_id: project.value.manager_id,
+            });
+
+            alertType.value = "alert-success";
+            notification.value = {
+                message: `Thêm dự án ${project.value.name} thành công!`,
+            };
+
+            setTimeout(() => {
+                alertType.value = null;
+                notification.value = null;
+                clickCreate.value = false;
+            }, 2000);
+
+            listProjects.value.data.unshift({ ...response.data.project });
+        } catch (e) {
+            alertType.value = "alert-danger";
+            notification.value = e.response.data;
+
+            setTimeout(() => {
+                alertType.value = null;
+                notification.value = null;
+            }, 2000);
+        }
+    };
+
+    getListManagers();
+
     return {
         listProjects,
         getListProjects,
@@ -130,5 +209,11 @@ export const useProjectStore = defineStore("projectStore", () => {
         updateProject,
         notification,
         alertType,
+        clickCreate,
+        project,
+        closeForm,
+        listManagers,
+        isValidated,
+        createProject,
     };
 });

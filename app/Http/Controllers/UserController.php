@@ -51,4 +51,12 @@ class UserController extends Controller
             'result' => $user
         ]);
     }
+
+    public function getManagers(){
+        $managers = $this->userRepository->getListManagers();
+
+        return response([
+            'managers' => $managers
+        ]);
+    }
 }

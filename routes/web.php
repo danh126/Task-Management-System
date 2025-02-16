@@ -32,8 +32,10 @@ Route::middleware('auth')->group(function () {
 
 // Call Api
 Route::middleware('auth')->group(function(){
-    Route::resource('users',UserController::class);
-    Route::resource('projects',ProjectController::class);
+    Route::resource('users', UserController::class);
+    Route::get('/managers', [UserController::class,'getManagers']);
+
+    Route::resource('projects', ProjectController::class);
 });
 
 require __DIR__.'/auth.php';

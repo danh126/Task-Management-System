@@ -21,7 +21,11 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        //
+        $project = $this->projectRepository->createProject($request);
+
+        return response([
+            'project' =>  $project
+        ]);
     }
 
     public function show(string $id)

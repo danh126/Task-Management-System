@@ -24,6 +24,21 @@ class ProjectRepository implements ProjectRepositoryInterface{
         //
     }
 
+    public function createProject(Request $request)
+    {
+        $request->validate([
+            'name' => ['required','max:200'],
+            'description' => 'required',
+            'start_date' => ['required', 'date', 'before:end_date'],
+            'end_date' => ['required', 'date', 'after:start_date'],
+            'manager_id' => 'required',
+        ]);
+
+        $project = $this->project->create($request->toArray());
+
+        return $project;
+    }
+
     public function updateProject($projectId, Request $request)
     {
         $request->validate([

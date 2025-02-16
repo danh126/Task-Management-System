@@ -62,4 +62,10 @@ class UserRepository implements UserRepositoryInterface
         $user = User::where('id',$userId)->delete();
         return $user;
     }
+
+    public function getListManagers()
+    {
+        $managers = $this->user->where('role','manager')->get();
+        return $managers;
+    }
 }

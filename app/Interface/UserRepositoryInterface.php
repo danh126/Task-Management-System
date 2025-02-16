@@ -11,4 +11,5 @@ interface UserRepositoryInterface
     public function createUser(Request $request);
     public function updateUser($userId, Request $request);
     public function deleteUser($userId);
+    public function getListManagers();
 }
