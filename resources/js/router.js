@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "./components/Home.vue";
 import Projects from "./components/project/Project.vue";
-import Tasks from "./components/Task.vue";
+import Tasks from "./components/task/Task.vue";
 import ListUsers from "./components/auth/ListUsers.vue";
 import Profile from "./components/auth/Profile.vue";
 import DetailProoject from "./components/project/DetailProject.vue";

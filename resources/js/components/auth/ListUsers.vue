@@ -17,7 +17,7 @@
                 type="text"
                 placeholder="Tìm kiếm tài khoản..."
                 class="form-control mt-2 mb-2"
-                v-if="!authStore.clickCreateAccount && authStore.click == false"
+                v-if="!authStore.clickCreateAccount"
                 v-model="authStore.txtSearch"
             />
         </div> -->
@@ -70,8 +70,6 @@
                         </buttonn>
                         <button
                             class="btn btn-danger"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
                             @click="authStore.clickDeleteUser(user, index)"
                         >
                             Xóa
@@ -97,49 +95,51 @@
         </table>
 
         <!-- Modal xóa tài khoản -->
-        <div
-            class="modal fade"
-            id="exampleModal"
-            tabindex="-1"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">
-                            Bạn có chắc chắn xóa tài khoản?
-                        </h1>
-                        <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                        ></button>
-                    </div>
-                    <div
-                        class="modal-body text-center"
-                        v-if="authStore.deleteUser != null"
-                    >
-                        {{ authStore.deleteUser.name }}
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                        >
-                            Hủy
-                        </button>
-                        <button
-                            class="btn btn-danger"
-                            @click="authStore.confirmDelUser"
-                        >
-                            Xóa tài khoản
-                        </button>
+        <div v-if="authStore.deleteUser !== null">
+            <div
+                class="modal fade show d-block"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                Bạn có chắc chắn xóa tài khoản?
+                            </h1>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                                @click="authStore.closeModal"
+                            ></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            {{ authStore.deleteUser.name }}
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                @click="authStore.closeModal"
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                class="btn btn-danger"
+                                @click="authStore.confirmDelUser"
+                            >
+                                Xóa tài khoản
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="modal-backdrop fade show"></div>
+            <!-- Thêm backdrop -->
         </div>
 
         <!-- Phân trang -->

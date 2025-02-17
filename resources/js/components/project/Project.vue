@@ -1,89 +1,7 @@
 <template>
+    <!-- Form create project -->
+    <CreateProject v-if="projectStore.clickCreate" />
     <div>
-        <!-- Form thêm dự án mới -->
-        <template v-if="projectStore.clickCreate">
-            <div>
-                <h3 class="mt-2 mb-2 text-center">Thêm dự án mới</h3>
-
-                <!-- Thông báo -->
-                <div
-                    :class="['alert', projectStore.alertType]"
-                    role="alert"
-                    v-if="projectStore.notification !== null"
-                >
-                    {{ projectStore.notification.message }}
-                </div>
-
-                <div class="form-group">
-                    <label for="" class="form-lable mt-2 mb-2">Tên dự án</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        v-model="projectStore.project.name"
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="" class="form-lable mt-2 mb-2">Mô tả</label>
-                    <textarea
-                        class="form-control"
-                        v-model="projectStore.project.description"
-                    ></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="" class="form-lable mt-2 mb-2"
-                        >Trưởng dự án</label
-                    >
-                    <select
-                        class="form-select"
-                        v-model="projectStore.project.manager_id"
-                    >
-                        <option
-                            v-for="manager in projectStore.listManagers
-                                .managers"
-                            :value="manager.id"
-                        >
-                            {{ manager.name }}
-                        </option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="" class="form-lable mt-2 mb-2"
-                        >Ngày bắt đầu</label
-                    >
-                    <input
-                        type="date"
-                        class="form-control"
-                        v-model="projectStore.project.start_date"
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="" class="form-lable mt-2 mb-2"
-                        >Ngày kết thúc</label
-                    >
-                    <input
-                        type="date"
-                        class="form-control"
-                        v-model="projectStore.project.end_date"
-                    />
-                </div>
-                <div class="form-group text-center mt-2 mb-2">
-                    <button
-                        class="btn btn-primary me-2"
-                        :disabled="!projectStore.isValidated"
-                        @click="projectStore.createProject"
-                    >
-                        Thêm dự án
-                    </button>
-                    <button
-                        class="btn btn-danger"
-                        @click="projectStore.closeForm"
-                    >
-                        Thoát
-                    </button>
-                </div>
-            </div>
-        </template>
-
         <!-- Danh sách dự án -->
         <h3 class="mt-2 mb-2 text-center">Danh sách dự án</h3>
         <button
@@ -124,9 +42,23 @@
                         <p>{{ project.description }}</p>
                         <button
                             class="btn btn-primary me-2"
+                            :disabled="
+                                !(authStore.user.id === project.manager_id)
+                            "
                             @click="projectStore.viewDetailProject(project.id)"
                         >
                             Chi tiết
+                        </button>
+                        <button
+                            class="btn btn-danger me-2"
+                            :disabled="
+                                !(authStore.user.id === project.manager_id)
+                            "
+                            @click="
+                                projectStore.clickDelProject(index, project)
+                            "
+                        >
+                            Xóa dự án
                         </button>
                     </div>
                 </div>
@@ -200,17 +132,75 @@
                 <a class="page-link" href="#">></a>
             </li>
         </ul>
+
+        <!-- Modal xóa dự án -->
+        <div v-if="projectStore.deleteProject !== null">
+            <div
+                class="modal fade show d-block"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                Bạn có chắc chắn xóa dự án?
+                            </h1>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                @click="projectStore.closeModal"
+                            ></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            {{ projectStore.deleteProject.name }}
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                @click="projectStore.closeModal"
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                class="btn btn-danger"
+                                @click="projectStore.confirmDelProject"
+                            >
+                                Xóa dự án
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-backdrop fade show"></div>
+            <!-- Thêm backdrop -->
+        </div>
     </div>
 </template>
 
 <script setup>
+// Stores
 import { useProjectStore } from "../../stores/projectStore";
-import { onMounted } from "vue";
+import { useAuthStore } from "../../stores/authStore";
 
+// Components
+import CreateProject from "./CreateProject.vue";
+
+// Libary
+import { onMounted } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
+
+const authStore = useAuthStore();
 const projectStore = useProjectStore();
 
 onMounted(() => {
     projectStore.getListProjects();
+});
+
+onBeforeRouteLeave(() => {
+    projectStore.closeForm();
 });
 </script>
 

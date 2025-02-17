@@ -35,6 +35,7 @@ class ProjectRepository implements ProjectRepositoryInterface{
         ]);
 
         $project = $this->project->create($request->toArray());
+        $project['status'] = 'pending';
 
         return $project;
     }
@@ -57,8 +58,12 @@ class ProjectRepository implements ProjectRepositoryInterface{
         }
     }
 
-    public function deleteProject($projectId, Request $request)
+    public function deleteProject($projectId)
     {
-        //
+        $project = $this->project->find($projectId);
+        if($project){
+            $project->delete();
+            return $project;
+        }
     }
 }

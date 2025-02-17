@@ -1,3 +1,4 @@
+import axios from "axios";
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
@@ -33,6 +34,10 @@ export const useProjectStore = defineStore("projectStore", () => {
     ]);
 
     const editProject = ref(null);
+    const showInfoManager = ref(false);
+
+    const deleteProject = ref(null);
+    const indexProject = ref(null);
 
     // Hàm lấy danh sách dự án
     const getListProjects = async (page = 1) => {
@@ -181,6 +186,8 @@ export const useProjectStore = defineStore("projectStore", () => {
                 clickCreate.value = false;
             }, 2000);
 
+            console.log(response.data.project);
+
             listProjects.value.data.unshift({ ...response.data.project });
         } catch (e) {
             alertType.value = "alert-danger";
@@ -190,6 +197,32 @@ export const useProjectStore = defineStore("projectStore", () => {
                 alertType.value = null;
                 notification.value = null;
             }, 2000);
+        }
+    };
+
+    // Hàm click xóa dự án
+    const clickDelProject = (index, project) => {
+        deleteProject.value = { ...project };
+        indexProject.value = index;
+    };
+
+    // Hàm close modal
+    const closeModal = () => {
+        deleteProject.value = null;
+        indexProject.value = null;
+    };
+
+    // Hàm xóa dự án
+    const confirmDelProject = async () => {
+        try {
+            await axios.delete(`/projects/${deleteProject.value.id}`);
+
+            deleteProject.value = null;
+
+            listProjects.value.data.splice(indexProject.value, 1);
+            indexProject.value = null;
+        } catch (error) {
+            console.log(error.response.data);
         }
     };
 
@@ -215,5 +248,11 @@ export const useProjectStore = defineStore("projectStore", () => {
         listManagers,
         isValidated,
         createProject,
+        showInfoManager,
+        deleteProject,
+        clickDelProject,
+        confirmDelProject,
+        closeModal,
+        indexProject,
     };
 });

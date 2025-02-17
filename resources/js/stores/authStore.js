@@ -8,7 +8,6 @@ export const useAuthStore = defineStore("authStore", () => {
     const listUsers = ref({});
     const selectedUser = ref(null);
     const clickCreateAccount = ref(false);
-    const click = ref(false);
     const deleteUser = ref(null);
     const getIndexDel = ref(null);
 
@@ -94,9 +93,14 @@ export const useAuthStore = defineStore("authStore", () => {
 
     // Hàm click xóa tài khoản
     const clickDeleteUser = (user, index) => {
-        click.value = true;
         getIndexDel.value = index;
         deleteUser.value = { ...user };
+    };
+
+    // Hàm close modal
+    const closeModal = () => {
+        deleteUser.value = null;
+        getIndexDel.value = null;
     };
 
     // Hàm xác nhận xóa tài khoản
@@ -106,7 +110,7 @@ export const useAuthStore = defineStore("authStore", () => {
             listUsers.value.data.splice(getIndexDel.value, 1);
 
             getIndexDel.value = null;
-            click.value = false;
+            deleteUser.value = null;
         } catch (error) {
             console.log(error);
         }
@@ -173,7 +177,6 @@ export const useAuthStore = defineStore("authStore", () => {
         closeCreateAccount,
         user,
         logout,
-        click,
         deleteUser,
         clickDeleteUser,
         confirmDelUser,
@@ -181,5 +184,6 @@ export const useAuthStore = defineStore("authStore", () => {
         isFormValid,
         alertType,
         notification,
+        closeModal,
     };
 });

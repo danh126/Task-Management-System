@@ -66,7 +66,12 @@
             <label for="">Trưởng dự án:</label>
             <div class="manager-info">
                 <p>{{ projectStore.detailProject.manager.name }}</p>
-                <button class="view-manager-btn">🔍</button>
+                <button
+                    class="view-manager-btn"
+                    @click="projectStore.showInfoManager = true"
+                >
+                    🔍
+                </button>
             </div>
 
             <label for="">Ngày bắt đầu:</label>
@@ -94,7 +99,10 @@
             <button
                 class="update-btn"
                 @click="projectStore.changeProject"
-                v-if="projectStore.clickUpdate === false"
+                v-if="
+                    projectStore.clickUpdate === false &&
+                    authStore.user.id === projectStore.detailProject.manager.id
+                "
             >
                 Cập nhật
             </button>
@@ -116,7 +124,14 @@
         <div class="project-tasks">
             <div class="task-header">
                 <h3>Nhiệm vụ dự án</h3>
-                <button class="add-task-btn" @click="addNewTask">
+                <button
+                    class="add-task-btn"
+                    @click="addNewTask"
+                    v-if="
+                        authStore.user.id ===
+                        projectStore.detailProject.manager.id
+                    "
+                >
                     + Thêm nhiệm vụ
                 </button>
             </div>
@@ -125,7 +140,15 @@
                     <li>
                         <span class="task-name">task 1</span>
                         <span class="task-status">To do</span>
-                        <button class="delete-task-btn">🗑</button>
+                        <button
+                            class="delete-task-btn"
+                            v-if="
+                                authStore.user.id ===
+                                projectStore.detailProject.manager.id
+                            "
+                        >
+                            🗑
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -148,13 +171,34 @@
             </ul>
         </div>
     </div>
+
+    <!-- Thông tin quản lý dự án -->
+    <template v-if="projectStore.showInfoManager">
+        <div class="center-box" id="popupBox">
+            <button
+                class="close-btn"
+                @click="projectStore.showInfoManager = false"
+            >
+                ✖
+            </button>
+            <h2>Thông tin Quản lý Dự án</h2>
+            <label>Trưởng dự án</label>
+            <p>{{ projectStore.detailProject.manager.name }}</p>
+            <label>Email</label>
+            <p>{{ projectStore.detailProject.manager.email }}</p>
+            <label>Vai trò</label>
+            <p>{{ projectStore.detailProject.manager.role }}</p>
+        </div>
+    </template>
 </template>
 
 <script setup>
 import { useProjectStore } from "../../stores/projectStore";
+import { useAuthStore } from "../../stores/authStore";
 import { onBeforeRouteLeave } from "vue-router";
 
 const projectStore = useProjectStore();
+const authStore = useAuthStore();
 
 // Được gọi trước khi component bị hủy
 onBeforeRouteLeave(() => {
@@ -163,6 +207,64 @@ onBeforeRouteLeave(() => {
 </script>
 
 <style scoped>
+/* Định dạng chung cho popup */
+.center-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    min-width: 350px;
+    max-width: 90%;
+    font-family: Arial, sans-serif;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Tiêu đề */
+.center-box h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: center;
+}
+
+/* Label và nội dung */
+.center-box label {
+    font-weight: bold;
+    color: #444;
+    display: block;
+    margin-top: 10px;
+}
+
+.center-box p {
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 5px;
+    color: #333;
+}
+
+/* Nút đóng */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #ff4d4d;
+}
+
 /* Task name */
 .task-name {
     flex: 1;
