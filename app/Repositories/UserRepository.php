@@ -68,4 +68,10 @@ class UserRepository implements UserRepositoryInterface
         $managers = $this->user->where('role','manager')->get();
         return $managers;
     }
+
+    public function getListEmployees()
+    {
+        $employees = $this->user->where('role','employee')->get();
+        return $employees;
+    }
 }

@@ -218,5 +218,3 @@ onMounted(() => {
     authStore.getListUsers();
 });
 </script>
-
-<style lang="scss" scoped></style>

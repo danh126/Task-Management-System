@@ -186,8 +186,6 @@ export const useProjectStore = defineStore("projectStore", () => {
                 clickCreate.value = false;
             }, 2000);
 
-            console.log(response.data.project);
-
             listProjects.value.data.unshift({ ...response.data.project });
         } catch (e) {
             alertType.value = "alert-danger";

@@ -1,3 +1,472 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.body-content {
+    padding-bottom: 60px;
+}
+
+.accordion-button {
+    background-color: white !important;
+    color: black !important;
+}
+
+.project-name {
+    background-color: rgb(101, 182, 229);
+    color: rgb(0, 0, 0);
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.title {
+    background-color: rgb(235, 199, 126);
+    color: rgb(0, 0, 0);
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.next {
+    padding-bottom: 20px;
+    margin: 0 5px 0 5px;
+    font-weight: bold;
+    color: rgb(195, 165, 139);
+}
+
+/* Trạng thái dự án */
+.pending {
+    background-color: #fff3cd;
+    color: rgb(0, 0, 0);
+    margin-left: 5px;
+    text-align: center;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.in_progress {
+    background-color: #cce5ff;
+    color: rgb(0, 0, 0);
+    margin-left: 5px;
+    text-align: center;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.completed {
+    background-color: #d4edda;
+    color: rgb(0, 0, 0);
+    margin-left: 5px;
+    text-align: center;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.todo {
+    background-color: #7ab39f;
+    color: rgb(0, 0, 0);
+    margin-left: 5px;
+    text-align: center;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.review {
+    background-color: #ffef77cd;
+    color: rgb(0, 0, 0);
+    margin-left: 5px;
+    text-align: center;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+/* Mức độ ưu tiên */
+.low {
+    background-color: #88a38e;
+    color: #ffffff;
+    padding: 3px;
+    margin-left: 10px;
+    border-radius: 10px;
+}
+
+.medium {
+    background-color: #c6b478;
+    color: #ffffff;
+    padding: 3px;
+    margin-left: 10px;
+    border-radius: 10px;
+}
+
+.high {
+    background-color: #eec549;
+    color: #ffffff;
+    padding: 3px;
+    margin-left: 10px;
+    border-radius: 10px;
+}
+
+.urgent {
+    background-color: #98555a;
+    color: #ffffff;
+    padding: 3px;
+    margin-left: 10px;
+    border-radius: 10px;
+}
+
+/*=================== Css detail project ========================*/
+/* Định dạng chung cho popup */
+.center-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    min-width: 350px;
+    max-width: 90%;
+    font-family: Arial, sans-serif;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Tiêu đề */
+.center-box h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: center;
+}
+
+/* Label và nội dung */
+.center-box label {
+    font-weight: bold;
+    color: #444;
+    display: block;
+    margin-top: 10px;
+}
+
+.center-box p {
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 5px;
+    color: #333;
+}
+
+/* Nút đóng */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #ff4d4d;
+}
+
+/* Task name */
+.task-name {
+    flex: 1;
+}
+
+/* Task status */
+.task-status {
+    font-size: 14px;
+    color: #666;
+    margin-right: 10px;
+}
+
+/* Nút xóa */
+.delete-task-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.delete-task-btn:hover {
+    background: #c82333;
+}
+
+/* Container chính */
+.project-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 20px auto;
+}
+
+/* Card chung cho từng phần */
+.project-details,
+.project-tasks,
+.project-files {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hiệu ứng hover */
+.project-details:hover,
+.project-tasks:hover,
+.project-files:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Tiêu đề */
+.project-details h3,
+.project-tasks h3,
+.project-files h3 {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+/* Labels và text */
+.project-details label {
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+    display: block;
+}
+
+.project-details p {
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+    color: #333;
+}
+
+/* Nút cập nhật */
+.update-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.update-btn:hover {
+    background: linear-gradient(45deg, #0056b3, #003f7f);
+}
+
+.update-btn-close {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+/* Bọc phần tiêu đề + nút */
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Nút thêm task */
+.add-task-btn {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.add-task-btn:hover {
+    background: linear-gradient(45deg, #0056b3, #003f7f);
+}
+
+/* Bọc danh sách task */
+.task-list-container {
+    max-height: 600px; /* Giới hạn chiều cao, có thể chỉnh sửa */
+    overflow-y: auto; /* Bật cuộn dọc khi danh sách quá dài */
+    padding-right: 5px; /* Để tránh nội dung bị che bởi thanh cuộn */
+}
+
+/* Ẩn thanh cuộn trên Firefox */
+.task-list-container {
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #f1f1f1;
+}
+
+/* Tùy chỉnh thanh cuộn cho Chrome & Edge */
+.task-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.task-list-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.task-list-container::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 10px;
+}
+
+.task-list-container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
+/* Task List */
+.project-tasks ul {
+    list-style: none;
+    padding: 0;
+}
+
+.project-tasks li {
+    padding: 10px;
+    border-radius: 5px;
+    background: #f1f1f1;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Danh sách file */
+/* Header chứa tiêu đề + nút tải file */
+.file-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Container danh sách file */
+.file-list-container {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Danh sách file */
+.project-files ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.project-files li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f1f1f1;
+    border-radius: 5px;
+    margin: 5px 0;
+    transition: background 0.3s;
+}
+
+.project-files li:hover {
+    background: #e0e0e0;
+}
+
+/* Tên file */
+.file-name {
+    flex: 1;
+}
+
+/* Nút tải file lên */
+.upload-file-btn {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.upload-file-btn:hover {
+    background: linear-gradient(45deg, #0056b3, #003f7f);
+}
+
+/* Nút xóa file */
+.delete-file-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.delete-file-btn:hover {
+    background: #c82333;
+}
+
+/* Manager Info */
+.manager-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.manager-info p {
+    margin: 0;
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+    flex-grow: 1;
+}
+
+.view-manager-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.view-manager-btn:hover {
+    background: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .project-container {
+        grid-template-columns: 1fr;
+    }
+
+    .project-files {
+        grid-column: span 1;
+    }
+}

@@ -7,12 +7,9 @@
 </template>
 
 <script setup>
+// Css
+import "../../css/app.css";
+
 import Navbar from "./Navbar.vue";
 import Footer from "./Footer.vue";
 </script>
-
-<style scoped>
-.body-content {
-    padding-bottom: 60px;
-}
-</style>

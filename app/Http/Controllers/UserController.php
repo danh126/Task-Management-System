@@ -59,4 +59,12 @@ class UserController extends Controller
             'managers' => $managers
         ]);
     }
+
+    public function getEmployees(){
+        $employees = $this->userRepository->getListEmployees();
+
+        return response([
+            'employees' => $employees
+        ]);
+    }
 }

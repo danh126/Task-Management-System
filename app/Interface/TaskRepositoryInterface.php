@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 
 interface TaskRepositoryInterface
 {
-    public function getTasks();
+    public function getTasksByManager($managerId);
+    public function getTasksByEmployee($employeeId);
     public function getTask($taskId);
     public function createTask(Request $request);
     public function updateTask($taskId, Request $request);

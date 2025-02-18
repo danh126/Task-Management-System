@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -32,10 +33,19 @@ Route::middleware('auth')->group(function () {
 
 // Call Api
 Route::middleware('auth')->group(function(){
+    // Users
     Route::resource('users', UserController::class);
     Route::get('/managers', [UserController::class,'getManagers']);
+    Route::get('/employees', [UserController::class,'getEmployees']);
 
+    // Projects
     Route::resource('projects', ProjectController::class);
+    Route::get('projects-by-manager/{id}', [ProjectController::class,'getProjectByManager']);
+    
+    // Tasks
+    Route::resource('/tasks',TaskController::class);
+    Route::get('/tasks-by-manager/{id}',[TaskController::class,'getTasksByManager']);
+    Route::get('/tasks-by-employee/{id}',[TaskController::class,'getTasksByEmployee']);
 });
 
 require __DIR__.'/auth.php';

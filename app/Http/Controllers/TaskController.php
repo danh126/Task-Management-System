@@ -21,7 +21,10 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        //
+        $task = $this->taskRepository->createTask($request);
+        return response([
+            'task' => $task
+        ]);
     }
 
     public function show(string $id)
@@ -31,11 +34,37 @@ class TaskController extends Controller
 
     public function update(Request $request, string $id)
     {
-        //
+        $task = $this->taskRepository->updateTask($id, $request);
+
+        return response([
+            'task' => $task
+        ]);
     }
 
     public function destroy(string $id)
     {
-        //
+        $task = $this->taskRepository->deleteTask($id);
+
+        return response([
+            'result' => $task
+        ]);
+    }
+
+    public function getTasksByManager($managerId)
+    {
+        $tasks = $this->taskRepository->getTasksByManager($managerId);
+
+        return response([
+            'tasks' => $tasks
+        ]);
+    }
+
+    public function getTasksByEmployee($employee)
+    {
+        $tasks = $this->taskRepository->getTasksByEmployee($employee);
+
+        return response([
+            'tasks' => $tasks
+        ]);
     }
 }

@@ -12,7 +12,7 @@
             Thêm dự án mới
         </button>
 
-        <div class="accordion" id="accordionExample">
+        <div class="accordion mt-2" id="accordionExample">
             <div
                 class="accordion-item"
                 v-for="(project, index) in projectStore.listProjects.data"
@@ -27,10 +27,11 @@
                         aria-expanded="true"
                         :aria-controls="`project-${project.id}`"
                     >
-                        {{ project.name }} >
-                        <span :class="projectStore.getClassByStatus(project)">{{
-                            project.status
-                        }}</span>
+                        <p class="project-name">{{ project.name }}</p>
+                        <span class="next">></span>
+                        <p :class="projectStore.getClassByStatus(project)">
+                            {{ project.status }}
+                        </p>
                     </button>
                 </h2>
                 <div
@@ -203,40 +204,3 @@ onBeforeRouteLeave(() => {
     projectStore.closeForm();
 });
 </script>
-
-<style scoped>
-.accordion-button {
-    background-color: white !important;
-    color: black !important;
-}
-
-.pending {
-    background-color: #fff3cd;
-    color: rgb(0, 0, 0);
-    margin-left: 5px;
-    margin-top: 5px;
-    text-align: center;
-    height: 25px;
-    width: 80px;
-}
-
-.in_progress {
-    background-color: #cce5ff;
-    color: rgb(0, 0, 0);
-    margin-left: 5px;
-    margin-top: 5px;
-    text-align: center;
-    height: 25px;
-    width: 90px;
-}
-
-.completed {
-    background-color: #d4edda;
-    color: rgb(0, 0, 0);
-    margin-left: 5px;
-    margin-top: 5px;
-    text-align: center;
-    height: 25px;
-    width: 80px;
-}
-</style>

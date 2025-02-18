@@ -23,4 +23,12 @@ class Task extends Model
     public function logs(){
         return $this->hasMany(Task_log::class);
     }
+
+    // Định dạng lại date
+    protected $dates = ['created_at','due_date'];
+
+    public function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
 }

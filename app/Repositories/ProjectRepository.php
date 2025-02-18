@@ -24,6 +24,12 @@ class ProjectRepository implements ProjectRepositoryInterface{
         //
     }
 
+    public function getProjectByManager($managerId)
+    {
+        $projects = $this->project->where('manager_id', $managerId)->orderBy('created_at','desc')->get();
+        return $projects;
+    }
+
     public function createProject(Request $request)
     {
         $request->validate([

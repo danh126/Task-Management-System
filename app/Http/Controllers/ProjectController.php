@@ -49,4 +49,12 @@ class ProjectController extends Controller
             'result' => $project
         ]);
     }
+
+    public function getProjectByManager($managerId){
+        $projects = $this->projectRepository->getProjectByManager($managerId);
+        
+        return response([
+            'projects' => $projects
+        ]);
+    }
 }
