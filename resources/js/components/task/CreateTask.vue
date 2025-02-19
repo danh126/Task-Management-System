@@ -94,14 +94,14 @@
 
 <script setup>
 import { useTaskStore } from "../../stores/taskStore";
-import { useAuthStore } from "../../stores/authStore";
 
 import { onMounted } from "vue";
 
 const taskStore = useTaskStore();
-const authStore = useAuthStore();
 
+// Thực hiện khi DOM được tải xong
 onMounted(() => {
-    taskStore.getListProjectsByManager(authStore.user.id);
+    taskStore.getListProjectsByManager();
+    taskStore.getListEmployees();
 });
 </script>

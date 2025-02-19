@@ -1,8 +1,12 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+
+import { useAuthStore } from "./authStore";
 
 export const useTaskStore = defineStore("taskStore", () => {
+    const authStore = useAuthStore();
+
     const listTasks = ref([]);
     const listEmployees = ref(null);
     const listProjects = ref(null);
@@ -51,10 +55,10 @@ export const useTaskStore = defineStore("taskStore", () => {
     };
 
     // Hàm lấy danh sách dự án theo manager
-    const getListProjectsByManager = async (manager_id) => {
+    const getListProjectsByManager = async () => {
         try {
             const response = await axios.get(
-                `/projects-by-manager/${manager_id}`
+                `/projects-by-manager/${authStore.user.id}`
             );
             listProjects.value = response.data.projects;
         } catch (error) {
@@ -63,11 +67,11 @@ export const useTaskStore = defineStore("taskStore", () => {
     };
 
     // Hàm lấy danh sách nhiệm vụ theo manager hoặc employee
-    const getListTasks = async (user, page = 1) => {
+    const getListTasks = async (page = 1) => {
         try {
-            if (user.role == "manager") {
+            if (authStore.user.role == "manager") {
                 const response = await axios.get(
-                    `/tasks-by-manager/${user.id}?page=${page}`
+                    `/tasks-by-manager/${authStore.user.id}?page=${page}`
                 );
                 listTasks.value = response.data.tasks;
 
@@ -76,7 +80,7 @@ export const useTaskStore = defineStore("taskStore", () => {
                 });
             } else {
                 const response = await axios.get(
-                    `/tasks-by-employee/${user.id}?page=${page}`
+                    `/tasks-by-employee/${authStore.user.id}?page=${page}`
                 );
                 listTasks.value = response.data.tasks;
 
@@ -85,7 +89,7 @@ export const useTaskStore = defineStore("taskStore", () => {
                 });
             }
         } catch (error) {
-            console.log(error.response.data);
+            // console.log(error.response.data);
         }
     };
 
@@ -193,21 +197,12 @@ export const useTaskStore = defineStore("taskStore", () => {
     // Hàm cập nhật task
     const updateTask = async (index) => {
         try {
-            const response = await axios.put(`/tasks/${taskEdit.value.id}`, {
+            await axios.put(`/tasks/${taskEdit.value.id}`, {
                 title: taskEdit.value.title,
                 description: taskEdit.value.description,
                 priority: taskEdit.value.priority,
                 due_date: taskEdit.value.due_date,
                 project_id: taskEdit.value.project_id,
-            });
-
-            Object.assign(listTasks.value.data[index], {
-                title: response.data.task.title,
-                description: response.data.task.description,
-                priority: response.data.task.priority,
-                due_date: response.data.task.due_date,
-                project_id: response.data.task.project_id,
-                isEdit: false,
             });
 
             alertType.value = "alert-success";
@@ -233,15 +228,11 @@ export const useTaskStore = defineStore("taskStore", () => {
     // Hàm cập nhật trạng thái task
     const updateTaskStatus = async (index) => {
         try {
-            const response = await axios.post(
-                `/update-task-status/${taskEdit.value.id}`,
-                {
-                    status: taskEdit.value.status,
-                }
-            );
+            await axios.post(`/update-task-status/${taskEdit.value.id}`, {
+                status: taskEdit.value.status,
+            });
 
             Object.assign(listTasks.value.data[index], {
-                status: response.data.task.status,
                 isUpdate: false,
             });
 
@@ -285,7 +276,68 @@ export const useTaskStore = defineStore("taskStore", () => {
         }
     };
 
-    getListEmployees();
+    // Thực hiện khi DOM được tải xong
+    onMounted(() => {
+        // Lắng nghe sự kiện real-time
+        const pusher = new Pusher("7b3ef34e93a799bbb649", {
+            cluster: "ap1",
+        });
+
+        // Object lưu trữ logic xử lý cho từng channel & event
+        const eventHandlers = {
+            "task-status-update": {
+                "App\\Events\\Task\\TaskStatusUpdate": (data) => {
+                    const task = listTasks.value.data.find(
+                        (t) => t.id === data.id
+                    );
+                    if (task) {
+                        task.status = data.status;
+                    }
+                },
+            },
+            "task-updated": {
+                "App\\Events\\Task\\TaskUpdated": (data) => {
+                    const task = listTasks.value.data.find(
+                        (t) => t.id === data.task.id
+                    );
+
+                    if (task) {
+                        task.title = data.task.title;
+                        task.description = data.task.description;
+                        task.priority = data.task.priority;
+                        task.due_date = data.task.due_date;
+                        task.project_id = data.task.project_id;
+                        task.isEdit = false;
+                    }
+                },
+            },
+        };
+
+        // Hàm xử lý chung cho mọi sự kiện
+        const handleEvent = (channelName, eventName, data) => {
+            // Kiểm tra sự tồn tại của channel name và event name
+            if (
+                eventHandlers[channelName] &&
+                eventHandlers[channelName][eventName]
+            ) {
+                // Tồn tại thì gọi ra logic xử lý tương ứng
+                eventHandlers[channelName][eventName](data);
+            }
+        };
+
+        // Đăng ký kênh và lắng nghe sự kiện
+        // Duyệt qua từng key trong eventHandlers
+        Object.keys(eventHandlers).forEach((channelName) => {
+            // Đăng ký vào pusher
+            const channel = pusher.subscribe(channelName);
+
+            // bind_global bắt tất cả các sự kiện từ Pusher
+            channel.bind_global((eventName, data) => {
+                // Gọi đến handleEvent kiểm tra channelName và eventName có tồn tại?
+                handleEvent(channelName, eventName, data);
+            });
+        });
+    });
 
     return {
         task,
@@ -313,5 +365,7 @@ export const useTaskStore = defineStore("taskStore", () => {
         findTaskStatus,
         listStatus,
         updateTaskStatus,
+        authStore,
+        getListEmployees,
     };
 });

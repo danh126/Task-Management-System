@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Task\TaskStatusUpdate;
+use App\Events\Task\TaskUpdated;
 use App\Interface\TaskRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -36,6 +38,8 @@ class TaskController extends Controller
     {
         $task = $this->taskRepository->updateTask($id, $request);
 
+        broadcast(new TaskUpdated($task));
+        
         return response([
             'task' => $task
         ]);
@@ -71,6 +75,8 @@ class TaskController extends Controller
     public function updateTaskStatus($taskId, Request $request)
     {
         $task = $this->taskRepository->updateTaskStatus($taskId, $request);
+
+        broadcast(new TaskStatusUpdate($task));
 
         return response([
             'task' => $task

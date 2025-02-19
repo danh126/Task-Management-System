@@ -2,11 +2,13 @@
     <!-- Form create task -->
     <CreateTask v-if="taskStore.clickCreate" />
     <div>
-        <!-- Danh sách nhiệm vụ -->
         <h3 class="mt-2 mb-2 text-center">Danh sách nhiệm vụ</h3>
         <button
             class="mt-2 mb-3 btn btn-success"
-            v-if="!taskStore.clickCreate && authStore.user.role === 'manager'"
+            v-if="
+                !taskStore.clickCreate &&
+                taskStore.authStore.user.role === 'manager'
+            "
             @click="taskStore.clickCreate = true"
         >
             Thêm nhiệm vụ mới
@@ -133,7 +135,9 @@
                         >
                             <button
                                 class="btn btn-primary me-2"
-                                v-if="authStore.user.role === 'manager'"
+                                v-if="
+                                    taskStore.authStore.user.role === 'manager'
+                                "
                                 @click="taskStore.findTask(task)"
                             >
                                 Cập nhật
@@ -141,8 +145,8 @@
                             <button
                                 class="btn btn-primary me-2"
                                 v-if="
-                                    authStore.user.role === 'employee' &&
-                                    !task.isUpdate
+                                    taskStore.authStore.user.role ===
+                                        'employee' && !task.isUpdate
                                 "
                                 @click="taskStore.findTaskStatus(task)"
                             >
@@ -156,7 +160,9 @@
                             </button>
                             <button
                                 class="btn btn-danger me-2"
-                                v-if="authStore.user.role === 'manager'"
+                                v-if="
+                                    taskStore.authStore.user.role === 'manager'
+                                "
                                 @click="taskStore.clickDelTask(index, task)"
                             >
                                 Xóa nhiệm vụ
@@ -199,75 +205,74 @@
             </div>
         </div>
 
-        <div>
-            {{ taskStore.listTasks.from }} - {{ taskStore.listTasks.to }} of
-            {{ taskStore.listTasks.total }}
-        </div>
-        <ul class="pagination mt-2 mb-2">
-            <li
-                class="page-item"
-                :class="{
-                    disabled: taskStore.listTasks.prev_page_url === null,
-                }"
-                @click="
-                    taskStore.listTasks.prev_page_url &&
+        <!-- Phân trang -->
+        <div class="mt-2">
+            <div>
+                {{ taskStore.listTasks.from }} - {{ taskStore.listTasks.to }} of
+                {{ taskStore.listTasks.total }}
+            </div>
+            <ul class="pagination mt-2 mb-2">
+                <li
+                    class="page-item"
+                    :class="{
+                        disabled: taskStore.listTasks.prev_page_url === null,
+                    }"
+                    @click="
+                        taskStore.listTasks.prev_page_url &&
+                            taskStore.getListTasks(
+                                taskStore.listTasks.current_page - 1
+                            )
+                    "
+                >
+                    <a class="page-link" href="#"><</a>
+                </li>
+                <li
+                    class="page-item"
+                    v-if="taskStore.listTasks.prev_page_url"
+                    @click="
                         taskStore.getListTasks(
-                            authStore.user,
                             taskStore.listTasks.current_page - 1
                         )
-                "
-            >
-                <a class="page-link" href="#"><</a>
-            </li>
-            <li
-                class="page-item"
-                v-if="taskStore.listTasks.prev_page_url"
-                @click="
-                    taskStore.getListTasks(
-                        authStore.user,
+                    "
+                >
+                    <a class="page-link" href="#">{{
                         taskStore.listTasks.current_page - 1
-                    )
-                "
-            >
-                <a class="page-link" href="#">{{
-                    taskStore.listTasks.current_page - 1
-                }}</a>
-            </li>
-            <li class="page-item active">
-                <a class="page-link" href="#">{{
-                    taskStore.listTasks.current_page
-                }}</a>
-            </li>
-            <li
-                class="page-item"
-                v-if="taskStore.listTasks.next_page_url"
-                @click="
-                    taskStore.getListTasks(
-                        authStore.user,
-                        taskStore.listTasks.current_page + 1
-                    )
-                "
-            >
-                <a class="page-link" href="#">{{
-                    taskStore.listTasks.current_page + 1
-                }}</a>
-            </li>
-            <li
-                class="page-item"
-                :class="{
-                    disabled: taskStore.listTasks.next_page_url === null,
-                }"
-                @click="
-                    taskStore.listTasks.next_page_url &&
+                    }}</a>
+                </li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">{{
+                        taskStore.listTasks.current_page
+                    }}</a>
+                </li>
+                <li
+                    class="page-item"
+                    v-if="taskStore.listTasks.next_page_url"
+                    @click="
                         taskStore.getListTasks(
-                            authStore.user,
                             taskStore.listTasks.current_page + 1
                         )
-                "
-            >
-                <a class="page-link" href="#">></a>
-            </li>
-        </ul>
+                    "
+                >
+                    <a class="page-link" href="#">{{
+                        taskStore.listTasks.current_page + 1
+                    }}</a>
+                </li>
+                <li
+                    class="page-item"
+                    :class="{
+                        disabled: taskStore.listTasks.next_page_url === null,
+                    }"
+                    @click="
+                        taskStore.listTasks.next_page_url &&
+                            taskStore.getListTasks(
+                                taskStore.listTasks.current_page + 1
+                            )
+                    "
+                >
+                    <a class="page-link" href="#">></a>
+                </li>
+            </ul>
+        </div>
 
         <!-- Modal xóa nhiệm vụ -->
         <div v-if="taskStore.deleteTask !== null">
@@ -325,13 +330,12 @@ import CreateTask from "./CreateTask.vue";
 
 // Stores
 import { useTaskStore } from "../../stores/taskStore";
-import { useAuthStore } from "../../stores/authStore";
 
 // define
 const taskStore = useTaskStore();
-const authStore = useAuthStore();
 
+// Thực hiện khi DOM được tải xong
 onMounted(() => {
-    taskStore.getListTasks(authStore.user);
+    taskStore.getListTasks();
 });
 </script>
