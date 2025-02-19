@@ -52,6 +52,21 @@
                             {{ taskStore.notification.message }}
                         </div>
 
+                        <p v-if="task.isUpdate" class="mt-2">
+                            <b class="me-2">Trạng thái:</b>
+                            <select
+                                class="form-select mt-2"
+                                v-model="taskStore.taskEdit.status"
+                            >
+                                <option
+                                    v-for="status in taskStore.listStatus"
+                                    :value="status.name"
+                                >
+                                    {{ status.name }}
+                                </option>
+                            </select>
+                        </p>
+
                         <p v-if="task.isEdit" class="mt-2">
                             <b class="me-2">Tiêu đề:</b>
                             <input
@@ -112,6 +127,7 @@
                             />
                         </p>
 
+                        <!-- Button xử lý tác vụ -->
                         <div
                             v-if="!task.isEdit && taskStore.deleteTask === null"
                         >
@@ -122,7 +138,20 @@
                             >
                                 Cập nhật
                             </button>
-                            <button class="btn btn-success me-2">
+                            <button
+                                class="btn btn-primary me-2"
+                                v-if="
+                                    authStore.user.role === 'employee' &&
+                                    !task.isUpdate
+                                "
+                                @click="taskStore.findTaskStatus(task)"
+                            >
+                                Cập nhật trạng thái
+                            </button>
+                            <button
+                                class="btn btn-success me-2"
+                                v-if="!task.isUpdate"
+                            >
                                 Bình luận
                             </button>
                             <button
@@ -134,6 +163,23 @@
                             </button>
                         </div>
 
+                        <!-- Update task status -->
+                        <div v-if="task.isUpdate">
+                            <button
+                                class="btn btn-primary me-2"
+                                @click="taskStore.updateTaskStatus(index)"
+                            >
+                                Lưu thay đổi
+                            </button>
+                            <button
+                                class="btn btn-danger me-2"
+                                @click="task.isUpdate = false"
+                            >
+                                Thoát
+                            </button>
+                        </div>
+
+                        <!-- Update task -->
                         <div v-if="task.isEdit">
                             <button
                                 class="btn btn-primary me-2"

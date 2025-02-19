@@ -67,4 +67,13 @@ class TaskController extends Controller
             'tasks' => $tasks
         ]);
     }
+
+    public function updateTaskStatus($taskId, Request $request)
+    {
+        $task = $this->taskRepository->updateTaskStatus($taskId, $request);
+
+        return response([
+            'task' => $task
+        ]);
+    }
 }

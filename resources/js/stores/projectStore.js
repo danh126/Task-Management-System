@@ -29,7 +29,7 @@ export const useProjectStore = defineStore("projectStore", () => {
 
     const statusProject = ref([
         { id: 1, name: "pending" },
-        { id: 2, name: "in_progress" },
+        { id: 2, name: "in progress" },
         { id: 3, name: "done" },
     ]);
 
@@ -53,7 +53,7 @@ export const useProjectStore = defineStore("projectStore", () => {
     const getClassByStatus = (project) => {
         return {
             pending: project.status === "pending",
-            in_progress: project.status === "in_progress",
+            in_progress: project.status === "in progress",
             completed: project.status === "done",
         };
     };

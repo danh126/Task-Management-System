@@ -11,5 +11,6 @@ interface TaskRepositoryInterface
     public function getTask($taskId);
     public function createTask(Request $request);
     public function updateTask($taskId, Request $request);
+    public function updateTaskStatus($taskId, Request $request);
     public function deleteTask($taskId);
 }

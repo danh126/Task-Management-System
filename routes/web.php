@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function(){
     Route::resource('/tasks',TaskController::class);
     Route::get('/tasks-by-manager/{id}',[TaskController::class,'getTasksByManager']);
     Route::get('/tasks-by-employee/{id}',[TaskController::class,'getTasksByEmployee']);
+    Route::post('/update-task-status/{id}',[TaskController::class,'updateTaskStatus']);
 });
 
 require __DIR__.'/auth.php';

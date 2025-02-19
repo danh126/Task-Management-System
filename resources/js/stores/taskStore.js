@@ -33,6 +33,13 @@ export const useTaskStore = defineStore("taskStore", () => {
         { id: 4, name: "urgent" },
     ]);
 
+    const listStatus = ref([
+        { id: 1, name: "todo" },
+        { id: 2, name: "in progress" },
+        { id: 3, name: "review" },
+        { id: 4, name: "done" },
+    ]);
+
     // Hàm lấy danh sách user thuộc role employee
     const getListEmployees = async () => {
         try {
@@ -72,6 +79,10 @@ export const useTaskStore = defineStore("taskStore", () => {
                     `/tasks-by-employee/${user.id}?page=${page}`
                 );
                 listTasks.value = response.data.tasks;
+
+                listTasks.value.data.forEach((item) => {
+                    item.isUpdate = false;
+                });
             }
         } catch (error) {
             console.log(error.response.data);
@@ -151,9 +162,9 @@ export const useTaskStore = defineStore("taskStore", () => {
     const getClassByStatus = (task) => {
         return {
             todo: task.status === "todo",
-            in_progress: task.status === "in_progress",
+            in_progress: task.status === "in progress",
             review: task.status === "review",
-            done: task.status === "done",
+            completed: task.status === "done",
         };
     };
 
@@ -170,6 +181,12 @@ export const useTaskStore = defineStore("taskStore", () => {
     // Hàm láy task edit
     const findTask = (task) => {
         task.isEdit = true;
+        taskEdit.value = { ...task };
+    };
+
+    // Hàm lấy task update status
+    const findTaskStatus = (task) => {
+        task.isUpdate = true;
         taskEdit.value = { ...task };
     };
 
@@ -210,6 +227,35 @@ export const useTaskStore = defineStore("taskStore", () => {
                 alertType.value = null;
                 notification.value = null;
             }, 2000);
+        }
+    };
+
+    // Hàm cập nhật trạng thái task
+    const updateTaskStatus = async (index) => {
+        try {
+            const response = await axios.post(
+                `/update-task-status/${taskEdit.value.id}`,
+                {
+                    status: taskEdit.value.status,
+                }
+            );
+
+            Object.assign(listTasks.value.data[index], {
+                status: response.data.task.status,
+                isUpdate: false,
+            });
+
+            alertType.value = "alert-success";
+            notification.value = {
+                message: `Cập nhật trạng thái nhiệm vụ ${taskEdit.value.status} thành công!`,
+            };
+
+            setTimeout(() => {
+                alertType.value = null;
+                notification.value = null;
+            }, 2000);
+        } catch (e) {
+            //
         }
     };
 
@@ -264,5 +310,8 @@ export const useTaskStore = defineStore("taskStore", () => {
         closeModal,
         clickDelTask,
         confirmDelTask,
+        findTaskStatus,
+        listStatus,
+        updateTaskStatus,
     };
 });

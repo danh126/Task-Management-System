@@ -91,6 +91,18 @@ class TaskRepository implements TaskRepositoryInterface{
         return $task;
     }
 
+    public function updateTaskStatus($taskId, Request $request)
+    {
+        $request->validate([
+            'status' => ['required','max:11']
+        ]);
+        
+        $task = $this->task->find($taskId);
+        $task->update($request->toArray());
+
+        return $task;
+    }
+
     public function deleteTask($taskId)
     {
         $task = $this->task->where('id', $taskId)->delete();
