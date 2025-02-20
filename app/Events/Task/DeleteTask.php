@@ -12,37 +12,24 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TaskUpdated implements ShouldBroadcast
+class DeleteTask implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $task;
-
-    public function __construct(Task $task)
+    
+    public function __construct($task)
     {
         $this->task = $task;
     }
 
     public function broadcastOn()
     {
-       return new PrivateChannel('task-updated');
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            "id" => $this->task->id,
-            "title" => $this->task->title,
-            "description" => $this->task->description,
-            "priority" => $this->task->priority,
-            "due_date" => $this->task->due_date,
-            "project_id" => $this->task->project_id,
-            'assignee_id' => $this->task->assignee_id
-        ];
+        return new PrivateChannel('task-delete');
     }
 
     public function broadcastAs()
     {
-        return 'TaskUpdated';
+        return 'DeleteTask';
     }
 }

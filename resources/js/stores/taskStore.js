@@ -1,8 +1,10 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 
 import { useAuthStore } from "./authStore";
+
+import echo from "../echo";
 
 export const useTaskStore = defineStore("taskStore", () => {
     const authStore = useAuthStore();
@@ -78,7 +80,7 @@ export const useTaskStore = defineStore("taskStore", () => {
                 listTasks.value.data.forEach((item) => {
                     item.isEdit = false;
                 });
-            } else {
+            } else if (authStore.user.role == "employee") {
                 const response = await axios.get(
                     `/tasks-by-employee/${authStore.user.id}?page=${page}`
                 );
@@ -87,6 +89,10 @@ export const useTaskStore = defineStore("taskStore", () => {
                 listTasks.value.data.forEach((item) => {
                     item.isUpdate = false;
                 });
+            } else {
+                const response = await axios.get(`/tasks?page=${page}`);
+
+                listTasks.value = response.data.tasks;
             }
         } catch (error) {
             // console.log(error.response.data);
@@ -130,7 +136,7 @@ export const useTaskStore = defineStore("taskStore", () => {
                 assignee_id: task.value.assignee_id,
             });
 
-            listTasks.value.data.unshift({ ...response.data.task });
+            // listTasks.value.data.unshift({ ...response.data.task });
 
             alertType.value = "alert-success";
             notification.value = {
@@ -205,6 +211,10 @@ export const useTaskStore = defineStore("taskStore", () => {
                 project_id: taskEdit.value.project_id,
             });
 
+            Object.assign(listTasks.value.data[index], {
+                isEdit: false,
+            });
+
             alertType.value = "alert-success";
             notification.value = {
                 message: `Cập nhật nhiệm vụ ${taskEdit.value.title} thành công!`,
@@ -276,67 +286,61 @@ export const useTaskStore = defineStore("taskStore", () => {
         }
     };
 
+    // Hàm dùng chung để lắng nghe sự kiện real-time
+    const listenToEvent = (channel, event, callback) => {
+        // Lắng nghe sự kiện
+        if (authStore.user.role === "admin") {
+            return;
+        }
+
+        echo.private(channel).listen(event, (d) => {
+            // Nếu user có quyền là manager hoặc
+            // user có id trùng với assignee_id trong task (task được giao cho user đó)
+            // thì được nhận thông báo real-time
+            if (
+                authStore.user.role === "manager" ||
+                authStore.user.id === d.assignee_id
+            ) {
+                callback(d);
+            }
+        });
+    };
+
     // Thực hiện khi DOM được tải xong
     onMounted(() => {
-        // Lắng nghe sự kiện real-time
-        const pusher = new Pusher("7b3ef34e93a799bbb649", {
-            cluster: "ap1",
+        // Lắng nghe sự kiện task created
+        listenToEvent("task-created", ".CreateTask", (d) => {
+            listTasks.value.data.unshift(d);
         });
 
-        // Object lưu trữ logic xử lý cho từng channel & event
-        const eventHandlers = {
-            "task-status-update": {
-                "App\\Events\\Task\\TaskStatusUpdate": (data) => {
-                    const task = listTasks.value.data.find(
-                        (t) => t.id === data.id
-                    );
-                    if (task) {
-                        task.status = data.status;
-                    }
-                },
-            },
-            "task-updated": {
-                "App\\Events\\Task\\TaskUpdated": (data) => {
-                    const task = listTasks.value.data.find(
-                        (t) => t.id === data.task.id
-                    );
+        // Lắng nghe sự kiện task status update
+        listenToEvent("task-status-update", ".TaskStatusUpdate", (d) => {
+            const task = listTasks.value.data.find((t) => t.id === d.id);
 
-                    if (task) {
-                        task.title = data.task.title;
-                        task.description = data.task.description;
-                        task.priority = data.task.priority;
-                        task.due_date = data.task.due_date;
-                        task.project_id = data.task.project_id;
-                        task.isEdit = false;
-                    }
-                },
-            },
-        };
-
-        // Hàm xử lý chung cho mọi sự kiện
-        const handleEvent = (channelName, eventName, data) => {
-            // Kiểm tra sự tồn tại của channel name và event name
-            if (
-                eventHandlers[channelName] &&
-                eventHandlers[channelName][eventName]
-            ) {
-                // Tồn tại thì gọi ra logic xử lý tương ứng
-                eventHandlers[channelName][eventName](data);
+            if (!task) {
+                return;
             }
-        };
 
-        // Đăng ký kênh và lắng nghe sự kiện
-        // Duyệt qua từng key trong eventHandlers
-        Object.keys(eventHandlers).forEach((channelName) => {
-            // Đăng ký vào pusher
-            const channel = pusher.subscribe(channelName);
-
-            // bind_global bắt tất cả các sự kiện từ Pusher
-            channel.bind_global((eventName, data) => {
-                // Gọi đến handleEvent kiểm tra channelName và eventName có tồn tại?
-                handleEvent(channelName, eventName, data);
-            });
+            task.status = d.status;
         });
+
+        // Lắng nghe sự kiện task updated
+        listenToEvent("task-updated", ".TaskUpdated", (d) => {
+            const task = listTasks.value.data.find((t) => t.id === d.id);
+
+            if (!task) {
+                return;
+            }
+
+            task.title = d.title;
+            task.description = d.description;
+            task.priority = d.priority;
+            task.due_date = d.due_date;
+            task.project_id = d.project_id;
+        });
+
+        // Lắng nghe sự kiện task delete
+        // Chưa xử lý....
     });
 
     return {

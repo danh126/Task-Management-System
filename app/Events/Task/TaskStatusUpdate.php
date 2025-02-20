@@ -22,16 +22,24 @@ class TaskStatusUpdate implements ShouldBroadcast
         $this->task = $task;
     }
 
+    // Trong hàm này có thể return nhiều channel route
     public function broadcastOn()
     {
-        return new Channel('task-status-update');
+        return new PrivateChannel('task-status-update');
     }
 
     // Custom data
     public function broadcastWith(){
         return [
             'id' => $this->task->id,
-            'status' => $this->task->status
+            'status' => $this->task->status,
+            'assignee_id' => $this->task->assignee_id
         ];
+    }
+
+    // Trả về Event
+    public function broadcastAs()
+    {
+        return 'TaskStatusUpdate';
     }
 }

@@ -6,7 +6,9 @@
         <h3 class="mt-2 mb-2 text-center">Danh sách dự án</h3>
         <button
             class="btn btn-success mt-2 mb-2"
-            v-if="!projectStore.clickCreate"
+            v-if="
+                !projectStore.clickCreate && authStore.user.role === 'manager'
+            "
             @click="projectStore.clickCreate = true"
         >
             Thêm dự án mới
@@ -41,98 +43,104 @@
                 >
                     <div class="accordion-body">
                         <p>{{ project.description }}</p>
-                        <button
-                            class="btn btn-primary me-2"
-                            :disabled="
-                                !(authStore.user.id === project.manager_id)
-                            "
-                            @click="projectStore.viewDetailProject(project.id)"
-                        >
-                            Chi tiết
-                        </button>
-                        <button
-                            class="btn btn-danger me-2"
-                            :disabled="
-                                !(authStore.user.id === project.manager_id)
-                            "
-                            @click="
-                                projectStore.clickDelProject(index, project)
-                            "
-                        >
-                            Xóa dự án
-                        </button>
+                        <div v-if="authStore.user.role === 'manager'">
+                            <button
+                                class="btn btn-primary me-2"
+                                @click="
+                                    projectStore.viewDetailProject(project.id)
+                                "
+                            >
+                                Chi tiết
+                            </button>
+                            <button
+                                class="btn btn-danger me-2"
+                                @click="
+                                    projectStore.clickDelProject(index, project)
+                                "
+                            >
+                                Xóa dự án
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Phân trang -->
-        <div>
-            {{ projectStore.listProjects.from }} -
-            {{ projectStore.listProjects.to }} of
-            {{ projectStore.listProjects.total }}
-        </div>
-        <ul class="pagination mt-2 mb-2">
-            <li
-                class="page-item"
-                :class="{
-                    disabled: projectStore.listProjects.prev_page_url === null,
-                }"
-                @click="
-                    projectStore.listProjects.prev_page_url &&
+        <div class="mt-2">
+            <div>
+                {{ projectStore.listProjects.from }} -
+                {{ projectStore.listProjects.to }} of
+                {{ projectStore.listProjects.total }}
+            </div>
+            <ul class="pagination mt-2 mb-2">
+                <li
+                    class="page-item"
+                    :class="{
+                        disabled:
+                            projectStore.listProjects.prev_page_url === null,
+                    }"
+                    @click="
+                        projectStore.listProjects.prev_page_url &&
+                            projectStore.getListProjects(
+                                authStore.user,
+                                projectStore.listProjects.current_page - 1
+                            )
+                    "
+                >
+                    <a class="page-link" href="#"><</a>
+                </li>
+                <li
+                    class="page-item"
+                    v-if="projectStore.listProjects.prev_page_url"
+                    @click="
                         projectStore.getListProjects(
+                            authStore.user,
                             projectStore.listProjects.current_page - 1
                         )
-                "
-            >
-                <a class="page-link" href="#"><</a>
-            </li>
-            <li
-                class="page-item"
-                v-if="projectStore.listProjects.prev_page_url"
-                @click="
-                    projectStore.getListProjects(
+                    "
+                >
+                    <a class="page-link" href="#">{{
                         projectStore.listProjects.current_page - 1
-                    )
-                "
-            >
-                <a class="page-link" href="#">{{
-                    projectStore.listProjects.current_page - 1
-                }}</a>
-            </li>
-            <li class="page-item active">
-                <a class="page-link" href="#">{{
-                    projectStore.listProjects.current_page
-                }}</a>
-            </li>
-            <li
-                class="page-item"
-                v-if="projectStore.listProjects.next_page_url"
-                @click="
-                    projectStore.getListProjects(
-                        projectStore.listProjects.current_page + 1
-                    )
-                "
-            >
-                <a class="page-link" href="#">{{
-                    projectStore.listProjects.current_page + 1
-                }}</a>
-            </li>
-            <li
-                class="page-item"
-                :class="{
-                    disabled: projectStore.listProjects.next_page_url === null,
-                }"
-                @click="
-                    projectStore.listProjects.next_page_url &&
+                    }}</a>
+                </li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">{{
+                        projectStore.listProjects.current_page
+                    }}</a>
+                </li>
+                <li
+                    class="page-item"
+                    v-if="projectStore.listProjects.next_page_url"
+                    @click="
                         projectStore.getListProjects(
+                            authStore.user,
                             projectStore.listProjects.current_page + 1
                         )
-                "
-            >
-                <a class="page-link" href="#">></a>
-            </li>
-        </ul>
+                    "
+                >
+                    <a class="page-link" href="#">{{
+                        projectStore.listProjects.current_page + 1
+                    }}</a>
+                </li>
+                <li
+                    class="page-item"
+                    :class="{
+                        disabled:
+                            projectStore.listProjects.next_page_url === null,
+                    }"
+                    @click="
+                        projectStore.listProjects.next_page_url &&
+                            projectStore.getListProjects(
+                                authStore.user,
+                                projectStore.listProjects.current_page + 1
+                            )
+                    "
+                >
+                    <a class="page-link" href="#">></a>
+                </li>
+            </ul>
+        </div>
 
         <!-- Modal xóa dự án -->
         <div v-if="projectStore.deleteProject !== null">
@@ -197,7 +205,7 @@ const authStore = useAuthStore();
 const projectStore = useProjectStore();
 
 onMounted(() => {
-    projectStore.getListProjects();
+    projectStore.getListProjects(authStore.user);
 });
 
 onBeforeRouteLeave(() => {

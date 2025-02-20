@@ -10,6 +10,7 @@ export const useAuthStore = defineStore("authStore", () => {
     const clickCreateAccount = ref(false);
     const deleteUser = ref(null);
     const getIndexDel = ref(null);
+    const click = ref(false);
 
     const alertType = ref("alert-danger");
     const notification = ref(null);
@@ -185,5 +186,6 @@ export const useAuthStore = defineStore("authStore", () => {
         alertType,
         notification,
         closeModal,
+        click,
     };
 });

@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\Task\TaskStatusUpdate;
-use App\Events\Task\TaskUpdated;
+use App\Events\Task\DeleteTask;
 use App\Interface\TaskRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -18,12 +17,17 @@ class TaskController extends Controller
 
     public function index()
     {
-        //
+        $tasks = $this->taskRepository->getTasks();
+
+        return response([
+            'tasks' => $tasks
+        ]);
     }
 
     public function store(Request $request)
     {
         $task = $this->taskRepository->createTask($request);
+
         return response([
             'task' => $task
         ]);
@@ -37,8 +41,6 @@ class TaskController extends Controller
     public function update(Request $request, string $id)
     {
         $task = $this->taskRepository->updateTask($id, $request);
-
-        broadcast(new TaskUpdated($task));
         
         return response([
             'task' => $task
@@ -75,8 +77,6 @@ class TaskController extends Controller
     public function updateTaskStatus($taskId, Request $request)
     {
         $task = $this->taskRepository->updateTaskStatus($taskId, $request);
-
-        broadcast(new TaskStatusUpdate($task));
 
         return response([
             'task' => $task

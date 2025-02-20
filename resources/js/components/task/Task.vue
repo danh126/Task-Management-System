@@ -131,7 +131,11 @@
 
                         <!-- Button xử lý tác vụ -->
                         <div
-                            v-if="!task.isEdit && taskStore.deleteTask === null"
+                            v-if="
+                                !task.isEdit &&
+                                taskStore.deleteTask === null &&
+                                taskStore.authStore.user.role !== 'admin'
+                            "
                         >
                             <button
                                 class="btn btn-primary me-2"
@@ -323,7 +327,8 @@
 
 <script setup>
 // Libary
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
+import echo from "../../echo.js";
 
 // Components
 import CreateTask from "./CreateTask.vue";

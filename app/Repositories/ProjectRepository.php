@@ -24,6 +24,12 @@ class ProjectRepository implements ProjectRepositoryInterface{
         //
     }
 
+    public function getProjectByManagerPagination($managerId)
+    {
+        $projects = $this->project->with('manager')->where('manager_id', $managerId)->orderBy('created_at','desc')->paginate(5);
+        return $projects;
+    }
+
     public function getProjectByManager($managerId)
     {
         $projects = $this->project->where('manager_id', $managerId)->orderBy('created_at','desc')->get();

@@ -40,10 +40,18 @@ export const useProjectStore = defineStore("projectStore", () => {
     const indexProject = ref(null);
 
     // Hàm lấy danh sách dự án
-    const getListProjects = async (page = 1) => {
+    const getListProjects = async (user, page = 1) => {
         try {
-            const response = await axios.get(`/projects?page=${page}`);
-            listProjects.value = response.data;
+            if (user.role == "admin") {
+                const response = await axios.get(`/projects?page=${page}`);
+                listProjects.value = response.data;
+            } else {
+                const response = await axios.get(
+                    `/projects-by-manager-pagination/${user.id}?page=${page}`
+                );
+
+                listProjects.value = response.data;
+            }
         } catch (error) {
             console.log(error);
         }

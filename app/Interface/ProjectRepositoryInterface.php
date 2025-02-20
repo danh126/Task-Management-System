@@ -9,6 +9,7 @@ interface ProjectRepositoryInterface
     public function getProjects();
     public function getProject($projectId);
     public function getProjectByManager($managerId);
+    public function getProjectByManagerPagination($managerId);
     public function createProject(Request $request);
     public function updateProject($projectId, Request $request);
     public function deleteProject($projectId);

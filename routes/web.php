@@ -40,7 +40,8 @@ Route::middleware('auth')->group(function(){
 
     // Projects
     Route::resource('projects', ProjectController::class);
-    Route::get('projects-by-manager/{id}', [ProjectController::class,'getProjectByManager']);
+    Route::get('/projects-by-manager-pagination/{id}', [ProjectController::class,'getProjectByManagerPagination']);
+    Route::get('/projects-by-manager/{id}', [ProjectController::class,'getProjectByManager']);
     
     // Tasks
     Route::resource('/tasks',TaskController::class);

@@ -50,9 +50,14 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function getProjectByManager($managerId){
+    public function getProjectByManagerPagination($managerId){
+        return $this->projectRepository->getProjectByManagerPagination($managerId);
+    }
+
+    public function getProjectByManager($managerId)
+    {
         $projects = $this->projectRepository->getProjectByManager($managerId);
-        
+
         return response([
             'projects' => $projects
         ]);

@@ -2,9 +2,15 @@
 
 namespace App\Repositories;
 
+use App\Events\Task\CreateTask;
+use App\Events\Task\DeleteTask;
+use App\Events\Task\TaskStatusUpdate;
+use App\Events\Task\TaskUpdated;
 use App\Interface\TaskRepositoryInterface;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
+use App\Notifications\TaskAssignedNotification;
 use Illuminate\Http\Request;
 
 class TaskRepository implements TaskRepositoryInterface{
@@ -37,9 +43,14 @@ class TaskRepository implements TaskRepositoryInterface{
         return $tasks;
     }
 
-    public function getTask($taskId)
+    public function getTasks()
     {
-        //
+        $tasks = $this->task->select('tasks.*', 'projects.name as project_name','users.name as user_name')
+        ->join('projects','tasks.project_id','=','projects.id')
+        ->join('users','users.id','=','tasks.assignee_id')
+        ->orderBy('created_at','desc')->paginate(5);
+
+        return $tasks;
     }
 
     public function createTask(Request $request)
@@ -61,9 +72,16 @@ class TaskRepository implements TaskRepositoryInterface{
         ]);
 
         $task = $this->task->create($request->toArray());
+
+        // Gửi thông báo reail-time
+        broadcast(new CreateTask($task));
     
-        $task['project_name'] = $project->name;
-        $task['status'] = 'todo';
+        // Gửi mail thông báo
+        $assignee = User::find($request->assignee_id);
+
+        if($assignee){
+            $assignee->notify(new TaskAssignedNotification($task));
+        }
 
         return $task;
     }
@@ -88,6 +106,9 @@ class TaskRepository implements TaskRepositoryInterface{
         $task = $this->task->find($taskId);
         $task->update($request->toArray());
 
+        // Gửi thông báo real-time
+        broadcast(new TaskUpdated($task));
+
         return $task;
     }
 
@@ -100,12 +121,23 @@ class TaskRepository implements TaskRepositoryInterface{
         $task = $this->task->find($taskId);
         $task->update($request->toArray());
 
+        // Gửi thông báo real-time
+        broadcast(new TaskStatusUpdate($task));
+
         return $task;
     }
 
     public function deleteTask($taskId)
     {
-        $task = $this->task->where('id', $taskId)->delete();
+        $task = $this->task->find($taskId);
+
+        $res = ['id' => $taskId,'assignee_id' => $task->assignee_id];
+
+        // Gửi thông báo real-time
+        broadcast(new DeleteTask($res));
+
+        $task->delete();
+
         return $task;
     }
 }

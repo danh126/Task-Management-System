@@ -24,6 +24,10 @@
                     <router-link
                         to="/spa/projects"
                         class="nav-link"
+                        v-if="
+                            authStore.user.role == 'admin' ||
+                            authStore.user.role == 'manager'
+                        "
                         exact-active-class="active"
                         >Dự án
                     </router-link>
