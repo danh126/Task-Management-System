@@ -1,66 +1,170 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Hệ Thống Quản Lý Công Việc (Task Management System)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📌 1. Giới Thiệu
 
-## About Laravel
+Hệ thống giúp người dùng quản lý công việc, theo dõi tiến độ và phân công nhiệm vụ trong nhóm.  
+Hỗ trợ sắp xếp công việc theo các trạng thái **To-Do, In Progress, Done** và cập nhật trạng thái theo thời gian thực.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠 2. Công Nghệ Sử Dụng
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Thành Phần         | Công Nghệ        |
+| ------------------ | ---------------- |
+| **Backend**        | Laravel 11 (API) |
+| **Frontend**       | Vue.js 3 (SPA)   |
+| **Database**       | MySQL            |
+| **Authentication** | Laravel Breeze   |
+| **Realtime**       | Pusher/WebSocket |
+| **UI/UX**          | Bootstrap        |
+| **Drag & Drop**    | Vue Draggable    |
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## ✨ 3. Chức Năng Chính
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 🔹 A. Quản Lý Người Dùng & Phân Quyền
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-   Đăng ký, đăng nhập, quên mật khẩu (Laravel Breeze).
+-   Phân quyền: **Admin, Leader, Member**.
 
-## Laravel Sponsors
+### 🔹 B. Quản Lý Dự Án (Projects)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+-   Tạo, sửa, xóa dự án.
+-   Mỗi dự án có nhiều danh sách công việc.
 
-### Premium Partners
+### 🔹 C. Quản Lý Công Việc (Tasks)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+-   Thêm, chỉnh sửa, xóa công việc.
+-   Gán công việc cho nhân viên.
+-   Đặt **deadline, mức độ ưu tiên** (Thấp, Trung bình, Cao).
+-   Cập nhật trạng thái công việc bằng **Drag & Drop**:
+    -   **To-Do** → **In Progress** → **Done**.
+-   Thêm ghi chú, bình luận trong công việc.
+-   Đính kèm file (tài liệu, hình ảnh).
+-   Nhắc nhở công việc sắp đến hạn qua email.
 
-## Contributing
+### 🔹 D. Thông Báo & Realtime
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-   **Cập nhật trạng thái công việc real-time** (Pusher/WebSocket).
+-   **Gửi email thông báo** khi có công việc mới hoặc thay đổi trạng thái.
 
-## Code of Conduct
+### 🔹 E. Thống Kê & Báo Cáo
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+-   Thống kê số lượng công việc theo trạng thái.
+-   Báo cáo hiệu suất làm việc của từng nhân viên.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🚀 4. Cài Đặt & Chạy Dự Án
 
-## License
+### 🔹 Backend (Laravel 11)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Clone dự án:**
+
+```bash
+git clone https://github.com/your-repo/task-management.git
+cd task-management
+```
+
+-   Cài đặt các package:
+
+```bash
+composer install
+```
+
+-   Cấu hình môi trường:
+
+    _Copy file .env.example thành .env:_
+
+```bash
+ cp .env.example .env
+```
+
+-   Cập nhật thông tin database, Pusher API trong .env.
+
+-   Tạo khóa ứng dụng:
+
+```bash
+php artisan key:generate
+```
+
+-   Chạy migration và seed dữ liệu:
+
+```bash
+php artisan migrate --seed
+```
+
+-   Chạy server backend:
+
+```bash
+php artisan serve
+```
+
+### 🔹 Frontend (Vue.js 3)
+
+-   Cài đặt package:
+
+```bash
+npm install
+```
+
+-   Chạy ứng dụng:
+
+```bash
+npm run dev
+```
+
+## 📡 5. Tích Hợp Pusher Realtime
+
+-   Cài đặt Pusher package:
+
+```bash
+composer require pusher/pusher-php-server
+```
+
+-   Cấu hình .env với thông tin Pusher:
+
+```bash
+PUSHER_APP_ID=your_app_id
+PUSHER_APP_KEY=your_app_key
+PUSHER_APP_SECRET=your_app_secret
+PUSHER_APP_CLUSTER=your_cluster
+```
+
+-   Cấu hình broadcasting.php trong Laravel:
+
+```bash
+'default' => env('BROADCAST_DRIVER', 'pusher'),
+
+        'connections' => [
+        'pusher' => [
+        'driver' => 'pusher',
+        'key' => env('PUSHER_APP_KEY'),
+        'secret' => env('PUSHER_APP_SECRET'),
+        'app_id' => env('PUSHER_APP_ID'),
+        'options' => [
+        'cluster' => env('PUSHER_APP_CLUSTER'),
+        'useTLS' => true,
+        ],
+    ],
+],
+```
+
+-   Chạy queue worker để xử lý job:
+
+```bash
+php artisan queue:work
+```
+
+### ⚠️ 6. Ghi Chú
+
+-   Dự án sử dụng Laravel Breeze cho xác thực và phân quyền.
+    Hỗ trợ Drag & Drop công việc bằng Vue Draggable.
+    Gửi thông báo real-time qua Pusher, gửi email thông báo công việc mới và các thay đổi liên quan.
+
+### 🤝 7. Đóng Góp
+
+-   Nếu bạn muốn đóng góp cho dự án, hãy tạo một pull request hoặc liên hệ qua email: **danhnt126@gmail.com**
+
+### 🌟 Cảm ơn bạn đã quan tâm đến dự án! 🚀
