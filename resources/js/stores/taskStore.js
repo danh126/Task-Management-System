@@ -3,11 +3,11 @@ import { defineStore } from "pinia";
 import { ref, computed, onMounted, watch } from "vue";
 
 import { useAuthStore } from "./authStore";
-
-import echo from "../echo";
+import { useEventStore } from "./eventStore";
 
 export const useTaskStore = defineStore("taskStore", () => {
     const authStore = useAuthStore();
+    const eventStore = useEventStore();
 
     const listTasks = ref([]);
     const listEmployees = ref(null);
@@ -279,53 +279,37 @@ export const useTaskStore = defineStore("taskStore", () => {
 
             deleteTask.value = null;
 
-            listTasks.value.data.splice(indexTask.value, 1);
+            // listTasks.value.data.splice(indexTask.value, 1);
             indexTask.value = null;
         } catch (error) {
             console.log(error.response.data);
         }
     };
 
-    // Hàm dùng chung để lắng nghe sự kiện real-time
-    const listenToEvent = (channel, event, callback) => {
-        // Lắng nghe sự kiện
-        if (authStore.user.role === "admin") {
-            return;
-        }
-
-        echo.private(channel).listen(event, (d) => {
-            // Nếu user có quyền là manager hoặc
-            // user có id trùng với assignee_id trong task (task được giao cho user đó)
-            // thì được nhận thông báo real-time
-            if (
-                authStore.user.role === "manager" ||
-                authStore.user.id === d.assignee_id
-            ) {
-                callback(d);
-            }
-        });
-    };
-
     // Thực hiện khi DOM được tải xong
     onMounted(() => {
         // Lắng nghe sự kiện task created
-        listenToEvent("task-created", ".CreateTask", (d) => {
+        eventStore.listenToEvent("task-created", ".CreateTask", (d) => {
             listTasks.value.data.unshift(d);
         });
 
         // Lắng nghe sự kiện task status update
-        listenToEvent("task-status-update", ".TaskStatusUpdate", (d) => {
-            const task = listTasks.value.data.find((t) => t.id === d.id);
+        eventStore.listenToEvent(
+            "task-status-update",
+            ".TaskStatusUpdate",
+            (d) => {
+                const task = listTasks.value.data.find((t) => t.id === d.id);
 
-            if (!task) {
-                return;
+                if (!task) {
+                    return;
+                }
+
+                task.status = d.status;
             }
-
-            task.status = d.status;
-        });
+        );
 
         // Lắng nghe sự kiện task updated
-        listenToEvent("task-updated", ".TaskUpdated", (d) => {
+        eventStore.listenToEvent("task-updated", ".TaskUpdated", (d) => {
             const task = listTasks.value.data.find((t) => t.id === d.id);
 
             if (!task) {
@@ -340,7 +324,12 @@ export const useTaskStore = defineStore("taskStore", () => {
         });
 
         // Lắng nghe sự kiện task delete
-        // Chưa xử lý....
+        eventStore.listenToEvent("task-delete", ".DeleteTask", (d) => {
+            // Lưu ý phải chuyển đổi id sang dạng Number
+            listTasks.value.data = listTasks.value.data.filter(
+                (task) => Number(task.id) !== Number(d.id)
+            );
+        });
     });
 
     return {

@@ -23,7 +23,12 @@
         </div> -->
 
         <!-- Danh sách tài khoản -->
-        <table class="table">
+        <table
+            class="table"
+            v-if="
+                authStore.listUsers.data && authStore.listUsers.data.length > 0
+            "
+        >
             <thead class="table-success">
                 <tr>
                     <th scope="col">ID</th>
@@ -94,6 +99,11 @@
             </tbody>
         </table>
 
+        <!-- Thông báo chưa có dữ liệu -->
+        <div class="text-center" v-else>
+            <p class="alert alert-success">Chưa có dữ liệu!</p>
+        </div>
+
         <!-- Modal xóa tài khoản -->
         <div v-if="authStore.deleteUser !== null">
             <div
@@ -143,67 +153,73 @@
         </div>
 
         <!-- Phân trang -->
-        <div>
-            {{ authStore.listUsers.from }} - {{ authStore.listUsers.to }} of
-            {{ authStore.listUsers.total }}
-        </div>
-        <ul class="pagination mt-2 mb-2">
-            <li
-                class="page-item"
-                :class="{
-                    disabled: authStore.listUsers.prev_page_url === null,
-                }"
-                @click="
-                    authStore.listUsers.prev_page_url &&
+        <div class="mt-2">
+            <div>
+                {{ authStore.listUsers.from }} - {{ authStore.listUsers.to }} of
+                {{ authStore.listUsers.total }}
+            </div>
+            <ul class="pagination mt-2 mb-2">
+                <li
+                    class="page-item"
+                    :class="{
+                        disabled: authStore.listUsers.prev_page_url === null,
+                    }"
+                    @click="
+                        authStore.listUsers.prev_page_url &&
+                            authStore.getListUsers(
+                                authStore.listUsers.current_page - 1
+                            )
+                    "
+                >
+                    <a class="page-link" href="#"><</a>
+                </li>
+                <li
+                    class="page-item"
+                    v-if="authStore.listUsers.prev_page_url"
+                    @click="
                         authStore.getListUsers(
                             authStore.listUsers.current_page - 1
                         )
-                "
-            >
-                <a class="page-link" href="#"><</a>
-            </li>
-            <li
-                class="page-item"
-                v-if="authStore.listUsers.prev_page_url"
-                @click="
-                    authStore.getListUsers(authStore.listUsers.current_page - 1)
-                "
-            >
-                <a class="page-link" href="#">{{
-                    authStore.listUsers.current_page - 1
-                }}</a>
-            </li>
-            <li class="page-item active">
-                <a class="page-link" href="#">{{
-                    authStore.listUsers.current_page
-                }}</a>
-            </li>
-            <li
-                class="page-item"
-                v-if="authStore.listUsers.next_page_url"
-                @click="
-                    authStore.getListUsers(authStore.listUsers.current_page + 1)
-                "
-            >
-                <a class="page-link" href="#">{{
-                    authStore.listUsers.current_page + 1
-                }}</a>
-            </li>
-            <li
-                class="page-item"
-                :class="{
-                    disabled: authStore.listUsers.next_page_url === null,
-                }"
-                @click="
-                    authStore.listUsers.next_page_url &&
+                    "
+                >
+                    <a class="page-link" href="#">{{
+                        authStore.listUsers.current_page - 1
+                    }}</a>
+                </li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">{{
+                        authStore.listUsers.current_page
+                    }}</a>
+                </li>
+                <li
+                    class="page-item"
+                    v-if="authStore.listUsers.next_page_url"
+                    @click="
                         authStore.getListUsers(
                             authStore.listUsers.current_page + 1
                         )
-                "
-            >
-                <a class="page-link" href="#">></a>
-            </li>
-        </ul>
+                    "
+                >
+                    <a class="page-link" href="#">{{
+                        authStore.listUsers.current_page + 1
+                    }}</a>
+                </li>
+                <li
+                    class="page-item"
+                    :class="{
+                        disabled: authStore.listUsers.next_page_url === null,
+                    }"
+                    @click="
+                        authStore.listUsers.next_page_url &&
+                            authStore.getListUsers(
+                                authStore.listUsers.current_page + 1
+                            )
+                    "
+                >
+                    <a class="page-link" href="#">></a>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 

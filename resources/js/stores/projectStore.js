@@ -66,6 +66,26 @@ export const useProjectStore = defineStore("projectStore", () => {
         };
     };
 
+    // Hàm xử lý class Priority
+    const getClassByPriority = (priority) => {
+        return {
+            low: priority === "low",
+            medium: priority === "medium",
+            high: priority === "high",
+            urgent: priority === "urgent",
+        };
+    };
+
+    // Hàm xử lý class task status
+    const getClassByTaskStatus = (task) => {
+        return {
+            todo: task.status === "todo",
+            in_progress: task.status === "in progress",
+            review: task.status === "review",
+            completed: task.status === "done",
+        };
+    };
+
     // Hàm tìm và lưu dụ án theo ID
     const setProject = (id) => {
         detailProject.value =
@@ -232,6 +252,11 @@ export const useProjectStore = defineStore("projectStore", () => {
         }
     };
 
+    // Hàm cập nhật mức độ ưu tiên task
+    const updateTaskPriority = async (event) => {
+        console.log(event);
+    };
+
     getListManagers();
 
     return {
@@ -260,5 +285,8 @@ export const useProjectStore = defineStore("projectStore", () => {
         confirmDelProject,
         closeModal,
         indexProject,
+        getClassByTaskStatus,
+        getClassByPriority,
+        updateTaskPriority,
     };
 });

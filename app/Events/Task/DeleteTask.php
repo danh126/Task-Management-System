@@ -23,6 +23,14 @@ class DeleteTask implements ShouldBroadcast
         $this->task = $task;
     }
 
+    public function broadcastWith()
+    {
+        return [
+            'id' => $this->task['id'] ?? null,
+            'assignee_id' => $this->task['assignee_id'] ?? null
+        ];
+    }
+
     public function broadcastOn()
     {
         return new PrivateChannel('task-delete');

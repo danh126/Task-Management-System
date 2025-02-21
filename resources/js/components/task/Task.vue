@@ -15,7 +15,13 @@
         </button>
 
         <!-- Danh sách nhiệm vụ -->
-        <div class="accordion mt-2" id="accordionExample">
+        <div
+            class="accordion mt-2"
+            id="accordionExample"
+            v-if="
+                taskStore.listTasks.data && taskStore.listTasks.data.length > 0
+            "
+        >
             <div
                 class="accordion-item"
                 v-for="(task, index) in taskStore.listTasks.data"
@@ -207,6 +213,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Thông báo chưa có dữ liệu -->
+        <div class="text-center" v-else>
+            <p class="alert alert-success">Chưa có dữ liệu!</p>
         </div>
 
         <!-- Phân trang -->

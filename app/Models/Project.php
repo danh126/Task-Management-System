@@ -14,7 +14,7 @@ class Project extends Model
     }
 
     public function tasks(){
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class)->orderBy('key_priority', 'asc');
     }
 
     protected function casts(): array

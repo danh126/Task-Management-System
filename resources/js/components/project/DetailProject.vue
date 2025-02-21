@@ -124,7 +124,7 @@
         <div class="project-tasks">
             <div class="task-header">
                 <h3>Nhiệm vụ dự án</h3>
-                <button
+                <!-- <button
                     class="add-task-btn"
                     @click="addNewTask"
                     v-if="
@@ -133,24 +133,58 @@
                     "
                 >
                     + Thêm nhiệm vụ
-                </button>
+                </button> -->
             </div>
             <div class="task-list-container">
-                <ul>
-                    <li>
-                        <span class="task-name">task 1</span>
-                        <span class="task-status">To do</span>
-                        <button
-                            class="delete-task-btn"
-                            v-if="
-                                authStore.user.id ===
-                                projectStore.detailProject.manager.id
-                            "
-                        >
-                            🗑
-                        </button>
-                    </li>
-                </ul>
+                <!-- Sử dụng draggable để thay đổi mức độ ưu tiên công việc -->
+                <draggable
+                    v-model="projectStore.detailProject.tasks"
+                    item-key="id"
+                    @end="projectStore.updateTaskPriority"
+                >
+                    <template #item="{ element }">
+                        <div>
+                            <ul>
+                                <li>
+                                    <span class="task-name title">{{
+                                        element.title
+                                    }}</span>
+                                    <span class="next mt-3">></span>
+                                    <span
+                                        :class="
+                                            projectStore.getClassByPriority(
+                                                element.priority
+                                            )
+                                        "
+                                    >
+                                        {{ element.priority }}
+                                    </span>
+                                    <span class="next mt-3">></span>
+                                    <span
+                                        :class="[
+                                            'me-2',
+                                            projectStore.getClassByTaskStatus(
+                                                element
+                                            ),
+                                        ]"
+                                    >
+                                        {{ element.status }}
+                                    </span>
+                                    <button
+                                        class="delete-task-btn"
+                                        v-if="
+                                            authStore.user.id ===
+                                            projectStore.detailProject.manager
+                                                ?.id
+                                        "
+                                    >
+                                        🗑
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </draggable>
             </div>
         </div>
     </div>
@@ -196,6 +230,10 @@
 import { useProjectStore } from "../../stores/projectStore";
 import { useAuthStore } from "../../stores/authStore";
 import { onBeforeRouteLeave } from "vue-router";
+
+import draggable from "vuedraggable";
+
+import { onMounted } from "vue";
 
 const projectStore = useProjectStore();
 const authStore = useAuthStore();

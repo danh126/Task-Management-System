@@ -2,7 +2,6 @@
     <!-- Form create project -->
     <CreateProject v-if="projectStore.clickCreate" />
     <div>
-        <!-- Danh sách dự án -->
         <h3 class="mt-2 mb-2 text-center">Danh sách dự án</h3>
         <button
             class="btn btn-success mt-2 mb-2"
@@ -14,7 +13,15 @@
             Thêm dự án mới
         </button>
 
-        <div class="accordion mt-2" id="accordionExample">
+        <!-- Danh sách dự án -->
+        <div
+            class="accordion mt-2"
+            id="accordionExample"
+            v-if="
+                projectStore.listProjects.data &&
+                projectStore.listProjects.data.length > 0
+            "
+        >
             <div
                 class="accordion-item"
                 v-for="(project, index) in projectStore.listProjects.data"
@@ -64,6 +71,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Thông báo chưa có dữ liệu -->
+        <div class="text-center" v-else>
+            <p class="alert alert-success">Chưa có dữ liệu!</p>
         </div>
 
         <!-- Phân trang -->

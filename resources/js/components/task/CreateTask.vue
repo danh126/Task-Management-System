@@ -12,7 +12,7 @@
         </div>
 
         <div class="form-group">
-            <label for="">Tiêu đề</label>
+            <label for="">Tiêu đề <span class="text-danger">(*)</span></label>
             <input
                 type="text"
                 v-model="taskStore.task.title"
@@ -20,14 +20,14 @@
             />
         </div>
         <div class="form-group">
-            <label for="">Mô tả</label>
+            <label for="">Mô tả <span class="text-danger">(*)</span></label>
             <textarea
                 v-model="taskStore.task.description"
                 class="form-control mt-2 mb-2"
             ></textarea>
         </div>
         <div class="form-group">
-            <label for="">Dự án</label>
+            <label for="">Dự án <span class="text-danger">(*)</span></label>
             <select
                 class="form-select mt-2 mb-2"
                 v-model="taskStore.task.project_id"
@@ -36,12 +36,16 @@
                     v-for="project in taskStore.listProjects"
                     :value="project.id"
                 >
-                    {{ project.name }}
+                    Project: {{ project.name }} - Start:
+                    {{ project.start_date }} - End:
+                    {{ project.end_date }}
                 </option>
             </select>
         </div>
         <div class="form-group">
-            <label for="">Người phụ trách</label>
+            <label for=""
+                >Người phụ trách <span class="text-danger">(*)</span></label
+            >
             <select
                 class="form-select mt-2 mb-2"
                 v-model="taskStore.task.assignee_id"
@@ -55,7 +59,9 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="">Mức độ ưu tiên</label>
+            <label for=""
+                >Mức độ ưu tiên <span class="text-danger">(*)</span></label
+            >
             <select
                 class="form-select mt-2 mb-2"
                 v-model="taskStore.task.priority"
@@ -69,7 +75,9 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="">Ngày hết hạn</label>
+            <label for=""
+                >Ngày hết hạn <span class="text-danger">(*)</span></label
+            >
             <input
                 type="date"
                 v-model="taskStore.task.due_date"

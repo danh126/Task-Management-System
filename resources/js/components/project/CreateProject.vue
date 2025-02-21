@@ -13,7 +13,9 @@
         </div>
 
         <div class="form-group">
-            <label for="" class="form-lable mt-2 mb-2">Tên dự án</label>
+            <label for="" class="form-lable mt-2 mb-2"
+                >Tên dự án <span class="text-danger">(*)</span></label
+            >
             <input
                 type="text"
                 class="form-control"
@@ -21,14 +23,18 @@
             />
         </div>
         <div class="form-group">
-            <label for="" class="form-lable mt-2 mb-2">Mô tả</label>
+            <label for="" class="form-lable mt-2 mb-2"
+                >Mô tả <span class="text-danger">(*)</span></label
+            >
             <textarea
                 class="form-control"
                 v-model="projectStore.project.description"
             ></textarea>
         </div>
         <div class="form-group">
-            <label for="" class="form-lable mt-2 mb-2">Trưởng dự án</label>
+            <label for="" class="form-lable mt-2 mb-2"
+                >Trưởng dự án <span class="text-danger">(*)</span></label
+            >
             <select
                 class="form-select"
                 v-model="projectStore.project.manager_id"
@@ -42,7 +48,9 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="" class="form-lable mt-2 mb-2">Ngày bắt đầu</label>
+            <label for="" class="form-lable mt-2 mb-2"
+                >Ngày bắt đầu <span class="text-danger">(*)</span></label
+            >
             <input
                 type="date"
                 class="form-control"
@@ -50,7 +58,9 @@
             />
         </div>
         <div class="form-group">
-            <label for="" class="form-lable mt-2 mb-2">Ngày kết thúc</label>
+            <label for="" class="form-lable mt-2 mb-2"
+                >Ngày kết thúc <span class="text-danger">(*)</span></label
+            >
             <input
                 type="date"
                 class="form-control"

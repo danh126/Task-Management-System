@@ -63,8 +63,8 @@ Hỗ trợ sắp xếp công việc theo các trạng thái **To-Do, In Progress
 1. **Clone dự án:**
 
 ```bash
-git clone https://github.com/your-repo/task-management.git
-cd task-management
+git clone https://github.com/danh126/Task-Management-System.git
+cd task-management-system
 ```
 
 -   Cài đặt các package:

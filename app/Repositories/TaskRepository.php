@@ -27,7 +27,7 @@ class TaskRepository implements TaskRepositoryInterface{
         ->join('projects','tasks.project_id','=','projects.id')
         ->join('users','users.id','=','tasks.assignee_id')
         ->where('projects.manager_id', $managerId)
-        ->orderBy('created_at','desc')->paginate(5);
+        ->orderBy('key_priority','asc')->paginate(5);
         
         return $tasks;
     }
@@ -38,7 +38,7 @@ class TaskRepository implements TaskRepositoryInterface{
         ->join('projects','tasks.project_id','=','projects.id')
         ->join('users','users.id','=','tasks.assignee_id')
         ->where('tasks.assignee_id', $employeeId)
-        ->orderBy('created_at','desc')->paginate(5);
+        ->orderBy('key_priority','asc')->paginate(5);
 
         return $tasks;
     }
@@ -48,7 +48,7 @@ class TaskRepository implements TaskRepositoryInterface{
         $tasks = $this->task->select('tasks.*', 'projects.name as project_name','users.name as user_name')
         ->join('projects','tasks.project_id','=','projects.id')
         ->join('users','users.id','=','tasks.assignee_id')
-        ->orderBy('created_at','desc')->paginate(5);
+        ->orderBy('key_priority','asc')->paginate(5);
 
         return $tasks;
     }
@@ -73,15 +73,14 @@ class TaskRepository implements TaskRepositoryInterface{
 
         $task = $this->task->create($request->toArray());
 
+        // Eager Load quan hệ assignee và project
+        $task->load(['assignee','project']);
+
         // Gửi thông báo reail-time
         broadcast(new CreateTask($task));
     
         // Gửi mail thông báo
-        $assignee = User::find($request->assignee_id);
-
-        if($assignee){
-            $assignee->notify(new TaskAssignedNotification($task));
-        }
+        $task->assignee->notify(new TaskAssignedNotification($task));
 
         return $task;
     }

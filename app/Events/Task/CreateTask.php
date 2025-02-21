@@ -4,6 +4,7 @@ namespace App\Events\Task;
 
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -29,9 +30,9 @@ class CreateTask implements ShouldBroadcast
         return new PrivateChannel('task-created');
     }
 
-    public function broadcastWith(){
-        $project = Project::find($this->task->project_id);
-
+    // Chuẩn bị data gửi đến client
+    public function broadcastWith()
+    {
         return [
             "title" => $this->task->title,
             "description" => $this->task->description,
@@ -42,7 +43,8 @@ class CreateTask implements ShouldBroadcast
             "updated_at" => $this->task->updated_at,
             "created_at" => $this->task->created_at,
             "id" => $this->task->id,
-            "project_name" => $project->name,
+            "project_name" => $this->task->project->name ?? null,
+            "user_name" => $this->task->assignee->name ?? null,
             "status" => $this->task->status
         ];
     }
