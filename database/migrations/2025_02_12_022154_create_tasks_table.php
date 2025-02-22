@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('status',11)->default('todo');
             $table->string('priority');
+            $table->unsignedTinyInteger('key_priority')->default(4);
             $table->date('due_date')->nullable();
             $table->unsignedInteger('project_id')->index();
             $table->unsignedInteger('assignee_id')->index();

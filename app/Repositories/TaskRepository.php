@@ -38,7 +38,7 @@ class TaskRepository implements TaskRepositoryInterface{
         ->join('projects','tasks.project_id','=','projects.id')
         ->join('users','users.id','=','tasks.assignee_id')
         ->where('tasks.assignee_id', $employeeId)
-        ->orderBy('key_priority','asc')->paginate(5);
+        ->orderBy('key_priority','asc')->get();
 
         return $tasks;
     }
@@ -122,6 +122,19 @@ class TaskRepository implements TaskRepositoryInterface{
 
         // Gửi thông báo real-time
         broadcast(new TaskStatusUpdate($task));
+
+        return $task;
+    }
+
+    public function updatePriority($taskId, Request $request)
+    {
+        $request->validate([
+            'priority' => ['required','max:11'],
+            'key_priority' => ['required']
+        ]);
+
+        $task = $this->task->find($taskId);
+        $task->update($request->toArray());
 
         return $task;
     }

@@ -80,7 +80,7 @@ export const useProjectStore = defineStore("projectStore", () => {
     const getClassByTaskStatus = (task) => {
         return {
             todo: task.status === "todo",
-            in_progress: task.status === "in progress",
+            in_progress: task.status === "in_progress",
             review: task.status === "review",
             completed: task.status === "done",
         };
@@ -253,8 +253,31 @@ export const useProjectStore = defineStore("projectStore", () => {
     };
 
     // Hàm cập nhật mức độ ưu tiên task
-    const updateTaskPriority = async (event) => {
-        console.log(event);
+    const updateTaskPriority = async () => {
+        try {
+            const priorited = ["urgent", "high", "medium", "low"];
+
+            const requests = detailProject.value.tasks.map((task, index) => {
+                let key_priority = index < 3 ? index + 1 : 4;
+                task.priority = index < 3 ? priorited[index] : "low";
+
+                // Gọi đến back-end update priority
+                return axios.post(`/update-task-priority/${task.id}`, {
+                    priority: task.priority,
+                    key_priority: key_priority,
+                });
+            });
+
+            await Promise.all(requests); // Chờ tất cả request hoàn thành
+
+            // Cập nhật localStorage
+            localStorage.setItem(
+                "detailProject",
+                JSON.stringify(detailProject.value)
+            );
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     getListManagers();

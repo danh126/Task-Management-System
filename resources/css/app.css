@@ -315,7 +315,8 @@
 }
 
 /* Ẩn thanh cuộn trên Firefox */
-.task-list-container {
+.task-list-container,
+.content {
     scrollbar-width: thin;
     scrollbar-color: #007bff #f1f1f1;
 }
@@ -528,4 +529,40 @@
 }
 .simple-bar-chart > .item > .value {
     inset: auto 0 100% 0;
+}
+
+/* Css task lists vue draggable */
+.content {
+    max-height: 400px;
+    overflow-y: scroll;
+    padding-right: 5px;
+}
+
+.title-content {
+    padding: 5px 0 5px 0;
+    background-color: rgb(112, 167, 180);
+}
+
+.content-task {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.note {
+    display: flex;
+}
+
+.note > p {
+    margin-left: 5px;
+}
+
+.note > p > .sub-1 {
+    color: rgb(101, 182, 229);
+    font-size: x-large;
+}
+
+.note > p > .sub-2 {
+    color: rgb(235, 199, 126);
+    font-size: x-large;
 }

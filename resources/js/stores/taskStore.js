@@ -1,6 +1,6 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, reactive } from "vue";
 
 import { useAuthStore } from "./authStore";
 import { useEventStore } from "./eventStore";
@@ -39,12 +39,19 @@ export const useTaskStore = defineStore("taskStore", () => {
         { id: 4, name: "urgent" },
     ]);
 
-    const listStatus = ref([
-        { id: 1, name: "todo" },
-        { id: 2, name: "in progress" },
-        { id: 3, name: "review" },
-        { id: 4, name: "done" },
-    ]);
+    const listStatus = ref({
+        todo: "Việc cần làm",
+        in_progress: "Đang thực hiện",
+        review: "Đánh giá",
+        done: "Hoàn thành",
+    });
+
+    const taskLists = ref({
+        todo: [],
+        in_progress: [],
+        review: [],
+        done: [],
+    });
 
     // Hàm lấy danh sách user thuộc role employee
     const getListEmployees = async () => {
@@ -82,12 +89,13 @@ export const useTaskStore = defineStore("taskStore", () => {
                 });
             } else if (authStore.user.role == "employee") {
                 const response = await axios.get(
-                    `/tasks-by-employee/${authStore.user.id}?page=${page}`
+                    `/tasks-by-employee/${authStore.user.id}`
                 );
                 listTasks.value = response.data.tasks;
 
-                listTasks.value.data.forEach((item) => {
-                    item.isUpdate = false;
+                listTasks.value.forEach((item) => {
+                    taskLists.value[item.status].push(item);
+                    // item.isUpdate = false;
                 });
             } else {
                 const response = await axios.get(`/tasks?page=${page}`);
@@ -169,12 +177,12 @@ export const useTaskStore = defineStore("taskStore", () => {
     };
 
     // Hàm xử lý class status
-    const getClassByStatus = (task) => {
+    const getClassByStatus = (status) => {
         return {
-            todo: task.status === "todo",
-            in_progress: task.status === "in progress",
-            review: task.status === "review",
-            completed: task.status === "done",
+            todo: status === "todo",
+            in_progress: status === "in_progress",
+            review: status === "review",
+            completed: status === "done",
         };
     };
 
@@ -236,25 +244,22 @@ export const useTaskStore = defineStore("taskStore", () => {
     };
 
     // Hàm cập nhật trạng thái task
-    const updateTaskStatus = async (index) => {
+    const updateTaskStatus = async (event) => {
         try {
-            await axios.post(`/update-task-status/${taskEdit.value.id}`, {
-                status: taskEdit.value.status,
-            });
+            // Lấy dữ liệu gốc của phần tử kéo
+            const task = event.item._underlying_vm_ || event.clone;
 
-            Object.assign(listTasks.value.data[index], {
-                isUpdate: false,
-            });
+            // Xác định status của cột dược kéo đến
+            const newStatus = event.to.getAttribute("data-status");
 
-            alertType.value = "alert-success";
-            notification.value = {
-                message: `Cập nhật trạng thái nhiệm vụ ${taskEdit.value.status} thành công!`,
-            };
+            if (task.status !== newStatus) {
+                task.status = newStatus;
 
-            setTimeout(() => {
-                alertType.value = null;
-                notification.value = null;
-            }, 2000);
+                // Gọi đến back-end update status
+                await axios.post(`/update-task-status/${task.id}`, {
+                    status: newStatus,
+                });
+            }
         } catch (e) {
             //
         }
@@ -360,5 +365,6 @@ export const useTaskStore = defineStore("taskStore", () => {
         updateTaskStatus,
         authStore,
         getListEmployees,
+        taskLists,
     };
 });

@@ -82,4 +82,13 @@ class TaskController extends Controller
             'task' => $task
         ]);
     }
+
+    public function updateTaskPriority($taskId, Request $request)
+    {
+        $task = $this->taskRepository->updatePriority($taskId, $request);
+        
+        return response([
+            'task' => $task
+        ]);
+    }
 }
