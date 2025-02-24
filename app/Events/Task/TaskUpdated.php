@@ -34,7 +34,7 @@ class TaskUpdated implements ShouldBroadcast
             "id" => $this->task->id,
             "title" => $this->task->title,
             "description" => $this->task->description,
-            "priority" => $this->task->priority,
+            "status" => $this->task->status,
             "due_date" => $this->task->due_date,
             "project_id" => $this->task->project_id,
             'assignee_id' => $this->task->assignee_id

@@ -45,12 +45,18 @@ export const useProjectStore = defineStore("projectStore", () => {
             if (user.role == "admin") {
                 const response = await axios.get(`/projects?page=${page}`);
                 listProjects.value = response.data;
-            } else {
+            } else if (user.role == "manager") {
                 const response = await axios.get(
                     `/projects-by-manager-pagination/${user.id}?page=${page}`
                 );
 
                 listProjects.value = response.data;
+            } else {
+                const response = await axios.get(
+                    `/projects-by-employee/${user.id}?page=${page}`
+                );
+
+                listProjects.value = response.data.projects;
             }
         } catch (error) {
             console.log(error);

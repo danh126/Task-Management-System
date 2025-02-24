@@ -27,6 +27,7 @@ class DeleteTask implements ShouldBroadcast
     {
         return [
             'id' => $this->task['id'] ?? null,
+            'status' => $this->task['status'] ?? null,
             'assignee_id' => $this->task['assignee_id'] ?? null
         ];
     }

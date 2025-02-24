@@ -60,22 +60,6 @@
         </div>
         <div class="form-group">
             <label for=""
-                >Mức độ ưu tiên <span class="text-danger">(*)</span></label
-            >
-            <select
-                class="form-select mt-2 mb-2"
-                v-model="taskStore.task.priority"
-            >
-                <option
-                    v-for="priority in taskStore.listPriority"
-                    :value="priority.name"
-                >
-                    {{ priority.name }}
-                </option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for=""
                 >Ngày hết hạn <span class="text-danger">(*)</span></label
             >
             <input

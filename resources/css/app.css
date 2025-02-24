@@ -547,6 +547,41 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-top: 10px;
+}
+
+.date-task {
+    padding: 0 15px 20px;
+}
+
+.date-task p {
+    font-size: 14px;
+    margin: 5px 0;
+    color: #333;
+}
+
+.date-task p:first-child {
+    font-weight: bold;
+    color: rgb(112, 167, 180);
+}
+
+.date-task button {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border: none;
+    background-color: rgb(112, 167, 180);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.date-task button:hover {
+    background-color: #3f7a7d;
 }
 
 .note {
@@ -565,4 +600,82 @@
 .note > p > .sub-2 {
     color: rgb(235, 199, 126);
     font-size: x-large;
+}
+
+/* Css task detail */
+.detail-task {
+    margin-top: 15px;
+    padding: 15px 5px 0px 5px;
+    background-color: #add5d7;
+    border-radius: 10px;
+    /* max-height: 410px; */
+}
+
+.detail-task h3 {
+    text-align: center;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid rgb(0, 0, 0);
+}
+
+.detail-task p {
+    padding: 10px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+}
+
+.comment-task,
+.file-task {
+    margin-top: 15px;
+    padding: 15px;
+}
+.comment-task h3,
+.file-task h3 {
+    text-align: center;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid rgb(0, 0, 0);
+}
+.comment-task .button {
+    display: flex;
+}
+
+.comment-task .content {
+    height: 370px;
+    overflow-y: scroll;
+}
+
+.file-task-lists ul li {
+    list-style: none;
+    margin-right: 10px;
+    background-color: #add5d7;
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.file-task-lists ul li span {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.task-files ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-files li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f1f1f1;
+    border-radius: 5px;
+    margin: 5px 0;
+    transition: background 0.3s;
+}
+
+.task-files li:hover {
+    background: #e0e0e0;
 }

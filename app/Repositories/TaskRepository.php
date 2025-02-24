@@ -34,11 +34,9 @@ class TaskRepository implements TaskRepositoryInterface{
     
     public function getTasksByEmployee($employeeId)
     {
-        $tasks = $this->task->select('tasks.*', 'projects.name as project_name','users.name as user_name')
+        $tasks = $this->task->select('tasks.*', 'projects.name as project_name')
         ->join('projects','tasks.project_id','=','projects.id')
-        ->join('users','users.id','=','tasks.assignee_id')
-        ->where('tasks.assignee_id', $employeeId)
-        ->orderBy('key_priority','asc')->get();
+        ->where('tasks.assignee_id', $employeeId)->get();
 
         return $tasks;
     }
@@ -60,7 +58,6 @@ class TaskRepository implements TaskRepositoryInterface{
         $request->validate([
             'title' => ['required','max:150'],
             'description' => ['required'],
-            'priority' => ['required','max:11'],
             'due_date' => [
                             'required',
                             'date',
@@ -92,7 +89,6 @@ class TaskRepository implements TaskRepositoryInterface{
         $request->validate([
             'title' => ['required','max:150'],
             'description' => ['required'],
-            'priority' => ['required','max:11'],
             'due_date' => [
                             'required',
                             'date',
@@ -143,7 +139,7 @@ class TaskRepository implements TaskRepositoryInterface{
     {
         $task = $this->task->find($taskId);
 
-        $res = ['id' => $taskId,'assignee_id' => $task->assignee_id];
+        $res = ['id' => $taskId, 'assignee_id' => $task->assignee_id, 'status' => $task->status];
 
         // Gửi thông báo real-time
         broadcast(new DeleteTask($res));

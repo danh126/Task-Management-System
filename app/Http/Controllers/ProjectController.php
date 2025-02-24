@@ -62,4 +62,12 @@ class ProjectController extends Controller
             'projects' => $projects
         ]);
     }
+
+    public function getProjectByEmployee($employeeId){
+        $projects = $this->projectRepository->getProjectByEmployee($employeeId);
+
+        return response([
+            'projects' => $projects
+        ]);
+    }
 }

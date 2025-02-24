@@ -26,9 +26,4 @@ import { useTaskStore } from "../../stores/taskStore";
 
 // define
 const taskStore = useTaskStore();
-
-// Thực hiện khi DOM được tải xong
-onMounted(() => {
-    taskStore.getListTasks();
-});
 </script>

@@ -36,6 +36,15 @@ class ProjectRepository implements ProjectRepositoryInterface{
         return $projects;
     }
 
+    public function getProjectByEmployee($employeeId)
+    {
+        $projects = $this->project->with(['manager'])->select('projects.*')
+        ->join('tasks','projects.id','=','tasks.project_id')
+        ->where('tasks.assignee_id',$employeeId)->groupBy('projects.id')->paginate(5);
+
+        return $projects;
+    }
+
     public function createProject(Request $request)
     {
         $request->validate([

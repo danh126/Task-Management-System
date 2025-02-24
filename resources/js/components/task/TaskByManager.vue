@@ -99,24 +99,9 @@
                         </p>
                         <p>
                             <b>Mức độ ưu tiên:</b>
-                            <span
-                                :class="taskStore.getClassByPriority(task)"
-                                v-if="!task.isEdit"
-                            >
+                            <span :class="taskStore.getClassByPriority(task)">
                                 {{ task.priority }}
                             </span>
-                            <select
-                                class="form-select mt-2"
-                                v-if="task.isEdit"
-                                v-model="taskStore.taskEdit.priority"
-                            >
-                                <option
-                                    v-for="priority in taskStore.listPriority"
-                                    :value="priority.name"
-                                >
-                                    {{ priority.name }}
-                                </option>
-                            </select>
                         </p>
                         <p>
                             <b class="me-2">Ngày giao:</b>
@@ -151,20 +136,15 @@
                                 Cập nhật
                             </button>
                             <button
-                                class="btn btn-primary me-2"
-                                v-if="
-                                    taskStore.authStore.user.role ===
-                                        'employee' && !task.isUpdate
-                                "
-                                @click="taskStore.findTaskStatus(task)"
-                            >
-                                Cập nhật trạng thái
-                            </button>
-                            <button
                                 class="btn btn-success me-2"
-                                v-if="!task.isUpdate"
+                                @click="
+                                    taskStore.clickTaskDetail(
+                                        task.id,
+                                        task.status
+                                    )
+                                "
                             >
-                                Bình luận
+                                Chi tiết
                             </button>
                             <button
                                 class="btn btn-danger me-2"
@@ -174,22 +154,6 @@
                                 @click="taskStore.clickDelTask(index, task)"
                             >
                                 Xóa nhiệm vụ
-                            </button>
-                        </div>
-
-                        <!-- Update task status -->
-                        <div v-if="task.isUpdate">
-                            <button
-                                class="btn btn-primary me-2"
-                                @click="taskStore.updateTaskStatus(index)"
-                            >
-                                Lưu thay đổi
-                            </button>
-                            <button
-                                class="btn btn-danger me-2"
-                                @click="task.isUpdate = false"
-                            >
-                                Thoát
                             </button>
                         </div>
 
@@ -336,11 +300,41 @@
 
 <script setup>
 // Libary
-import { onMounted, watch } from "vue";
+import { onMounted, watch, onBeforeUnmount } from "vue";
 
 // Stores
 import { useTaskStore } from "../../stores/taskStore";
 
 // define
 const taskStore = useTaskStore();
+
+// Thực hiện khi DOM được tải xong
+onMounted(() => {
+    taskStore.getListTasks();
+
+    // Lắng nghe sự kiện task created
+    taskStore.eventStore.listenToEvent("task-created", ".CreateTask", (d) => {
+        taskStore.listTasks.data.unshift(d);
+    });
+
+    // Lắng nghe sự kiện task status update
+    taskStore.eventStore.listenToEvent(
+        "task-status-update",
+        ".TaskStatusUpdate",
+        (d) => {
+            const task = taskStore.listTasks.data.find((t) => t.id === d.id);
+
+            if (!task) {
+                return;
+            }
+
+            task.status = d.status;
+        }
+    );
+});
+
+// Reset data store
+onBeforeUnmount(() => {
+    taskStore.clearTaskStore();
+});
 </script>

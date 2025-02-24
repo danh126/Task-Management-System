@@ -1,13 +1,16 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref, computed, onMounted, reactive } from "vue";
+import { ref, computed } from "vue";
 
 import { useAuthStore } from "./authStore";
 import { useEventStore } from "./eventStore";
 
+import { useRouter } from "vue-router";
+
 export const useTaskStore = defineStore("taskStore", () => {
     const authStore = useAuthStore();
     const eventStore = useEventStore();
+    const router = useRouter();
 
     const listTasks = ref([]);
     const listEmployees = ref(null);
@@ -15,6 +18,9 @@ export const useTaskStore = defineStore("taskStore", () => {
     const clickCreate = ref(false);
 
     const taskEdit = ref(null);
+    const taskDetail = ref(
+        JSON.parse(localStorage.getItem("task-detail")) || null
+    );
 
     // Thông báo
     const alertType = ref(null);
@@ -26,7 +32,6 @@ export const useTaskStore = defineStore("taskStore", () => {
     const task = ref({
         title: "",
         description: "",
-        priority: "",
         due_date: "",
         project_id: "",
         assignee_id: "",
@@ -112,7 +117,6 @@ export const useTaskStore = defineStore("taskStore", () => {
         return (
             task.value.name !== "" &&
             task.value.description !== "" &&
-            task.value.priority !== "" &&
             task.value.due_date !== "" &&
             task.value.project_id !== "" &&
             task.value.assignee_id !== ""
@@ -138,13 +142,12 @@ export const useTaskStore = defineStore("taskStore", () => {
             const response = await axios.post("/tasks", {
                 title: task.value.title,
                 description: task.value.description,
-                priority: task.value.priority,
                 due_date: task.value.due_date,
                 project_id: task.value.project_id,
                 assignee_id: task.value.assignee_id,
             });
 
-            // listTasks.value.data.unshift({ ...response.data.task });
+            // listTasks.value.data.unshift(response.data);
 
             alertType.value = "alert-success";
             notification.value = {
@@ -211,15 +214,18 @@ export const useTaskStore = defineStore("taskStore", () => {
     // Hàm cập nhật task
     const updateTask = async (index) => {
         try {
-            await axios.put(`/tasks/${taskEdit.value.id}`, {
+            const response = await axios.put(`/tasks/${taskEdit.value.id}`, {
                 title: taskEdit.value.title,
                 description: taskEdit.value.description,
-                priority: taskEdit.value.priority,
                 due_date: taskEdit.value.due_date,
                 project_id: taskEdit.value.project_id,
             });
 
             Object.assign(listTasks.value.data[index], {
+                title: response.data.task.title,
+                description: response.data.task.description,
+                due_date: response.data.task.due_date,
+                project_id: response.data.task.project_id,
                 isEdit: false,
             });
 
@@ -284,60 +290,49 @@ export const useTaskStore = defineStore("taskStore", () => {
 
             deleteTask.value = null;
 
-            // listTasks.value.data.splice(indexTask.value, 1);
+            listTasks.value.data.splice(indexTask.value, 1);
             indexTask.value = null;
         } catch (error) {
             console.log(error.response.data);
         }
     };
 
-    // Thực hiện khi DOM được tải xong
-    onMounted(() => {
-        // Lắng nghe sự kiện task created
-        eventStore.listenToEvent("task-created", ".CreateTask", (d) => {
-            listTasks.value.data.unshift(d);
-        });
+    // Hàm clear store task
+    const clearTaskStore = () => {
+        listTasks.value = [];
+        taskLists.value = {
+            todo: [],
+            in_progress: [],
+            review: [],
+            done: [],
+        };
+    };
 
-        // Lắng nghe sự kiện task status update
-        eventStore.listenToEvent(
-            "task-status-update",
-            ".TaskStatusUpdate",
-            (d) => {
-                const task = listTasks.value.data.find((t) => t.id === d.id);
-
-                if (!task) {
-                    return;
-                }
-
-                task.status = d.status;
-            }
-        );
-
-        // Lắng nghe sự kiện task updated
-        eventStore.listenToEvent("task-updated", ".TaskUpdated", (d) => {
-            const task = listTasks.value.data.find((t) => t.id === d.id);
-
-            if (!task) {
-                return;
-            }
-
-            task.title = d.title;
-            task.description = d.description;
-            task.priority = d.priority;
-            task.due_date = d.due_date;
-            task.project_id = d.project_id;
-        });
-
-        // Lắng nghe sự kiện task delete
-        eventStore.listenToEvent("task-delete", ".DeleteTask", (d) => {
-            // Lưu ý phải chuyển đổi id sang dạng Number
-            listTasks.value.data = listTasks.value.data.filter(
-                (task) => Number(task.id) !== Number(d.id)
+    const setTaskDetail = (id, status) => {
+        if (authStore.user.role === "employee") {
+            taskDetail.value = {
+                ...taskLists.value[status].find(
+                    (t) => Number(t.id) === Number(id)
+                ),
+            };
+        } else {
+            taskDetail.value = listTasks.value.data.find(
+                (t) => Number(t.id) === Number(id)
             );
-        });
-    });
+        }
+
+        localStorage.setItem("task-details", JSON.stringify(taskDetail.value));
+    };
+
+    // Hàm click task detail
+    const clickTaskDetail = (id, status) => {
+        setTaskDetail(id, status);
+
+        router.push(`/spa/tasks/${task.id}`);
+    };
 
     return {
+        eventStore,
         task,
         listPriority,
         listEmployees,
@@ -366,5 +361,8 @@ export const useTaskStore = defineStore("taskStore", () => {
         authStore,
         getListEmployees,
         taskLists,
+        clearTaskStore,
+        clickTaskDetail,
+        taskDetail,
     };
 });

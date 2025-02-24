@@ -31,8 +31,8 @@ class Task extends Model
     }
 
     // Định dạng lại date
-    protected $dates = ['created_at','due_date'];
-
+    protected $dates = ['created_at', 'due_date'];
+    
     public function serializeDate(\DateTimeInterface $date)
     {
         return $date->format('Y-m-d');

@@ -5,7 +5,8 @@
                 <router-link to="/spa/projects">Quay lại</router-link>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                Thông tin chi tiết dự án {{ projectStore.detailProject.name }}
+                Thông tin chi tiết dự án
+                <b>{{ projectStore.detailProject.name }}</b>
             </li>
         </ol>
     </nav>
