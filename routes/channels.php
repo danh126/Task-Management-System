@@ -23,3 +23,15 @@ Broadcast::channel('task-status-update', function ($user) {
 Broadcast::channel('task-delete', function ($user) {
     return in_array($user->role, ['manager','employee']);
 });
+
+Broadcast::channel('create-task-attachment', function ($user) {
+    return in_array($user->role, ['manager','employee']);
+});
+
+Broadcast::channel('delete-task-attachment', function ($user) {
+    return in_array($user->role, ['manager','employee']);
+});
+
+Broadcast::channel('updated-task-attachment', function ($user) {
+    return in_array($user->role, ['manager','employee']);
+});

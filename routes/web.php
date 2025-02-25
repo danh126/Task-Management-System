@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskAttachmentController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -50,6 +51,11 @@ Route::middleware('auth')->group(function(){
     Route::get('/tasks-by-employee/{id}',[TaskController::class,'getTasksByEmployee']);
     Route::post('/update-task-status/{id}',[TaskController::class,'updateTaskStatus']);
     Route::post('/update-task-priority/{id}',[TaskController::class,'updateTaskPriority']);
+
+    // Task Attachment
+    Route::resource('task-attachment', TaskAttachmentController::class);
+    Route::get('/task-attachments/{id}',[TaskAttachmentController::class, 'getTaskAttachmentsByTaskId']);
+    Route::post('/task-attachments-file-confrim/{id}',[TaskAttachmentController::class, 'fileConfrim']);
 });
 
 require __DIR__.'/auth.php';

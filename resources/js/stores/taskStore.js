@@ -1,6 +1,6 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 import { useAuthStore } from "./authStore";
 import { useEventStore } from "./eventStore";
@@ -18,9 +18,15 @@ export const useTaskStore = defineStore("taskStore", () => {
     const clickCreate = ref(false);
 
     const taskEdit = ref(null);
+
     const taskDetail = ref(
         JSON.parse(localStorage.getItem("task-detail")) || null
     );
+
+    // Theo dõi giá trị thay đổi
+    watch(taskDetail, (newValue) => {
+        localStorage.setItem("task-detail", JSON.stringify(newValue));
+    });
 
     // Thông báo
     const alertType = ref(null);
@@ -28,6 +34,13 @@ export const useTaskStore = defineStore("taskStore", () => {
 
     const deleteTask = ref(null);
     const indexTask = ref(null);
+
+    // Upload file
+    const selectedFile = ref([]);
+    const taskAttachments = ref([]);
+
+    // Comments
+    const comments = ref([]);
 
     const task = ref({
         title: "",
@@ -56,6 +69,11 @@ export const useTaskStore = defineStore("taskStore", () => {
         in_progress: [],
         review: [],
         done: [],
+    });
+
+    const ClassByFileConfrim = ref({
+        0: "fa fa-adjust text-danger",
+        1: "fa fa-check-circle text-primary",
     });
 
     // Hàm lấy danh sách user thuộc role employee
@@ -308,6 +326,7 @@ export const useTaskStore = defineStore("taskStore", () => {
         };
     };
 
+    // Hàm lưu data task detail
     const setTaskDetail = (id, status) => {
         if (authStore.user.role === "employee") {
             taskDetail.value = {
@@ -328,7 +347,78 @@ export const useTaskStore = defineStore("taskStore", () => {
     const clickTaskDetail = (id, status) => {
         setTaskDetail(id, status);
 
-        router.push(`/spa/tasks/${task.id}`);
+        router.push(`/spa/tasks/${id}`);
+    };
+
+    // Hàm lưu file đã chọn
+    const setFiles = (files) => {
+        if (selectedFile.value.length > 0) {
+            selectedFile.value.push(...files);
+        } else {
+            selectedFile.value = [...files];
+        }
+    };
+
+    // Hàm xóa file upload đã chọn
+    const deleteFileSelect = (index) => {
+        selectedFile.value.splice(index, 1);
+    };
+
+    // Hàm upload file
+    const uploadFiles = async () => {
+        if (selectedFile.value.length === 0) {
+            alert("Vui lòng chọn ít nhất 1 file để tải lên!");
+            return;
+        }
+
+        const formData = new FormData();
+
+        selectedFile.value.forEach((file) => {
+            formData.append("files[]", file);
+            formData.append("task_id", taskDetail.value.id);
+            formData.append("uploaded_by", authStore.user.id);
+        });
+
+        try {
+            // Nếu có sử dụng form data thì tất cả data gửi về back-end thì đều append vào formData
+            await axios.post("/task-attachment", formData);
+
+            // Gọi api lấy danh sách mới
+            // await getTaskAttachments(taskDetail.value.id);
+
+            selectedFile.value = [];
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // Hàm lấy danh sách file task attachments
+    const getTaskAttachments = async (id) => {
+        try {
+            const response = await axios.get(`/task-attachments/${id}`);
+
+            taskAttachments.value = response.data.task_attachments;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // Hàm xóa file attachment
+    const deleteFileTaskAttachment = async (index, id) => {
+        try {
+            await axios.delete("/task-attachment/" + id);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // Hàm xác nhận file task attachment
+    const fileConfrim = async (id) => {
+        try {
+            await axios.post(`/task-attachments-file-confrim/${id}`);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return {
@@ -364,5 +454,15 @@ export const useTaskStore = defineStore("taskStore", () => {
         clearTaskStore,
         clickTaskDetail,
         taskDetail,
+        selectedFile,
+        setFiles,
+        deleteFileSelect,
+        uploadFiles,
+        taskAttachments,
+        getTaskAttachments,
+        deleteFileTaskAttachment,
+        ClassByFileConfrim,
+        fileConfrim,
+        comments,
     };
 });

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('file_name',64);
             $table->string('file_path',120);
             $table->unsignedInteger('uploaded_by')->index();
+            $table->unsignedTinyInteger('file_confrim')->default(0);
             $table->timestamps();
 
             $table->foreign('task_id')->references('id')->on('tasks');
