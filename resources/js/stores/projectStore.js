@@ -6,10 +6,12 @@ import { useRouter } from "vue-router";
 export const useProjectStore = defineStore("projectStore", () => {
     const listProjects = ref([]);
     const clickDetail = ref(false);
+
     // Lấy dữ liệu từ localStorage nếu có
     const detailProject = ref(
         JSON.parse(localStorage.getItem("detailProject")) || null
     );
+
     const router = useRouter();
     const clickUpdate = ref(false);
 
@@ -21,6 +23,7 @@ export const useProjectStore = defineStore("projectStore", () => {
         end_date: "",
         manager_id: "",
     });
+
     const listManagers = ref([]);
 
     // Thông báo
@@ -290,32 +293,32 @@ export const useProjectStore = defineStore("projectStore", () => {
 
     return {
         listProjects,
-        getListProjects,
-        getClassByStatus,
         clickDetail,
         detailProject,
-        viewDetailProject,
         clickUpdate,
         statusProject,
-        changeProject,
         editProject,
-        updateProject,
         notification,
         alertType,
         clickCreate,
         project,
-        closeForm,
         listManagers,
         isValidated,
-        createProject,
         showInfoManager,
         deleteProject,
-        clickDelProject,
-        confirmDelProject,
-        closeModal,
         indexProject,
         getClassByTaskStatus,
         getClassByPriority,
         updateTaskPriority,
+        getListProjects,
+        getClassByStatus,
+        clickDelProject,
+        confirmDelProject,
+        closeModal,
+        createProject,
+        viewDetailProject,
+        changeProject,
+        closeForm,
+        updateProject,
     };
 });

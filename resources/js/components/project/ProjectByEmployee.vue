@@ -75,7 +75,7 @@
                             )
                     "
                 >
-                    <a class="page-link" href="#"><</a>
+                    <a class="page-link"><</a>
                 </li>
                 <li
                     class="page-item"
@@ -87,12 +87,12 @@
                         )
                     "
                 >
-                    <a class="page-link" href="#">{{
+                    <a class="page-link">{{
                         projectStore.listProjects.current_page - 1
                     }}</a>
                 </li>
                 <li class="page-item active">
-                    <a class="page-link" href="#">{{
+                    <a class="page-link">{{
                         projectStore.listProjects.current_page
                     }}</a>
                 </li>
@@ -106,7 +106,7 @@
                         )
                     "
                 >
-                    <a class="page-link" href="#">{{
+                    <a class="page-link">{{
                         projectStore.listProjects.current_page + 1
                     }}</a>
                 </li>
@@ -124,7 +124,7 @@
                             )
                     "
                 >
-                    <a class="page-link" href="#">></a>
+                    <a class="page-link">></a>
                 </li>
             </ul>
         </div>

@@ -9,6 +9,7 @@ interface TaskAttachmentsInterface
     public function createTaskAttachment(Request $request);
     public function saveFiles($files, $folder);
     public function getTaskAttachmentsByTaskId($taskId);
+    public function getTaskAttachmentsByProjectId($projectId);
     public function fileConfrim($fileId);
     public function deleteFile($fileId);
 }

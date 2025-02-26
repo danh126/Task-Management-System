@@ -56,6 +56,15 @@ class TaskAttachmentController extends Controller
         ]);
     }
 
+    public function getTaskAttachmentsByProjectId($projectId)
+    {
+        $taskAttachments = $this->taskAttachmentRepository->getTaskAttachmentsByProjectId($projectId);
+
+        return response([
+            'task_attachments' => $taskAttachments
+        ]);
+    }
+
     public function fileConfrim($fileId)
     {
         $file = $this->taskAttachmentRepository->fileConfrim($fileId);

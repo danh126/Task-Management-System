@@ -6,9 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task_notification extends Model
 {
-    protected $fillable = ['id', 'user_id', 'message', 'is_read'];
+    protected $fillable = [
+        'id',
+        'user_id',
+        'message',
+        'is_read'
+    ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

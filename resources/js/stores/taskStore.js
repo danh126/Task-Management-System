@@ -35,10 +35,6 @@ export const useTaskStore = defineStore("taskStore", () => {
     const deleteTask = ref(null);
     const indexTask = ref(null);
 
-    // Upload file
-    const selectedFile = ref([]);
-    const taskAttachments = ref([]);
-
     // Comments
     const comments = ref([]);
 
@@ -69,11 +65,6 @@ export const useTaskStore = defineStore("taskStore", () => {
         in_progress: [],
         review: [],
         done: [],
-    });
-
-    const ClassByFileConfrim = ref({
-        0: "fa fa-adjust text-danger",
-        1: "fa fa-check-circle text-primary",
     });
 
     // Hàm lấy danh sách user thuộc role employee
@@ -350,77 +341,6 @@ export const useTaskStore = defineStore("taskStore", () => {
         router.push(`/spa/tasks/${id}`);
     };
 
-    // Hàm lưu file đã chọn
-    const setFiles = (files) => {
-        if (selectedFile.value.length > 0) {
-            selectedFile.value.push(...files);
-        } else {
-            selectedFile.value = [...files];
-        }
-    };
-
-    // Hàm xóa file upload đã chọn
-    const deleteFileSelect = (index) => {
-        selectedFile.value.splice(index, 1);
-    };
-
-    // Hàm upload file
-    const uploadFiles = async () => {
-        if (selectedFile.value.length === 0) {
-            alert("Vui lòng chọn ít nhất 1 file để tải lên!");
-            return;
-        }
-
-        const formData = new FormData();
-
-        selectedFile.value.forEach((file) => {
-            formData.append("files[]", file);
-            formData.append("task_id", taskDetail.value.id);
-            formData.append("uploaded_by", authStore.user.id);
-        });
-
-        try {
-            // Nếu có sử dụng form data thì tất cả data gửi về back-end thì đều append vào formData
-            await axios.post("/task-attachment", formData);
-
-            // Gọi api lấy danh sách mới
-            // await getTaskAttachments(taskDetail.value.id);
-
-            selectedFile.value = [];
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // Hàm lấy danh sách file task attachments
-    const getTaskAttachments = async (id) => {
-        try {
-            const response = await axios.get(`/task-attachments/${id}`);
-
-            taskAttachments.value = response.data.task_attachments;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // Hàm xóa file attachment
-    const deleteFileTaskAttachment = async (index, id) => {
-        try {
-            await axios.delete("/task-attachment/" + id);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    // Hàm xác nhận file task attachment
-    const fileConfrim = async (id) => {
-        try {
-            await axios.post(`/task-attachments-file-confrim/${id}`);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     return {
         eventStore,
         task,
@@ -428,41 +348,32 @@ export const useTaskStore = defineStore("taskStore", () => {
         listEmployees,
         listProjects,
         isFormValid,
-        getListProjectsByManager,
-        createTask,
         alertType,
         notification,
         clickCreate,
-        closeFormCreate,
         listTasks,
-        getListTasks,
-        getClassByStatus,
-        getClassByPriority,
-        findTask,
+        taskDetail,
+        comments,
         taskEdit,
-        updateTask,
         deleteTask,
+        listStatus,
+        authStore,
+        taskLists,
+        updateTaskStatus,
+        getListEmployees,
+        updateTask,
         closeModal,
         clickDelTask,
         confirmDelTask,
         findTaskStatus,
-        listStatus,
-        updateTaskStatus,
-        authStore,
-        getListEmployees,
-        taskLists,
+        getListTasks,
+        getClassByStatus,
+        getClassByPriority,
+        findTask,
+        closeFormCreate,
         clearTaskStore,
         clickTaskDetail,
-        taskDetail,
-        selectedFile,
-        setFiles,
-        deleteFileSelect,
-        uploadFiles,
-        taskAttachments,
-        getTaskAttachments,
-        deleteFileTaskAttachment,
-        ClassByFileConfrim,
-        fileConfrim,
-        comments,
+        getListProjectsByManager,
+        createTask,
     };
 });

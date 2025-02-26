@@ -29,9 +29,9 @@ class UserRepository implements UserRepositoryInterface
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'role' => ['required','string','max:10']
-        ],[
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'role' => ['required', 'string', 'max:10']
+        ], [
             'email.email' => 'Vui lòng nhập đúng định dạng Email!',
             'email.unique' => 'Email đã tồn tại trong hệ thống!'
         ]);
@@ -50,28 +50,28 @@ class UserRepository implements UserRepositoryInterface
     public function updateUser($userId, Request $request)
     {
         $user = User::find($userId);
-        
-        if($user){
-            $user->update($request->toArray()); 
+
+        if ($user) {
+            $user->update($request->toArray());
             return $user;
         }
     }
 
     public function deleteUser($userId)
     {
-        $user = User::where('id',$userId)->delete();
+        $user = User::where('id', $userId)->delete();
         return $user;
     }
 
     public function getListManagers()
     {
-        $managers = $this->user->where('role','manager')->get();
+        $managers = $this->user->where('role', 'manager')->get();
         return $managers;
     }
 
     public function getListEmployees()
     {
-        $employees = $this->user->where('role','employee')->get();
+        $employees = $this->user->where('role', 'employee')->get();
         return $employees;
     }
 }

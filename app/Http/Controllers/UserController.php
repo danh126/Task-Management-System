@@ -22,11 +22,11 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-       $user = $this->userRepository->createUser($request);
+        $user = $this->userRepository->createUser($request);
 
-       return response([
-        'user' => $user
-       ]);
+        return response([
+            'user' => $user
+        ]);
     }
 
     public function show(string $id)
@@ -37,7 +37,7 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = $this->userRepository->updateUser($id, $request);
-        
+
         return response([
             'user' => $user
         ]);
@@ -52,7 +52,8 @@ class UserController extends Controller
         ]);
     }
 
-    public function getManagers(){
+    public function getManagers()
+    {
         $managers = $this->userRepository->getListManagers();
 
         return response([
@@ -60,7 +61,8 @@ class UserController extends Controller
         ]);
     }
 
-    public function getEmployees(){
+    public function getEmployees()
+    {
         $employees = $this->userRepository->getListEmployees();
 
         return response([

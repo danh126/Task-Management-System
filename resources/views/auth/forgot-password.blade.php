@@ -16,11 +16,11 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a href="{{route('login')}}" class="px-4 py-2 bg-blue-500 text-black rounded-lg shadow hover:bg-blue-600 transition">
+        <div class="flex items-center justify-end mt-4 space-x-2">
+            <a href="{{ route('login') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
                 Đăng nhập
-            </a>              
-            <x-primary-button>
+            </a>                                   
+            <x-primary-button >
                 {{ __('Lấy lại mật khẩu') }}
             </x-primary-button>
         </div>

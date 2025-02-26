@@ -35,7 +35,7 @@ class ProjectController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $project = $this->projectRepository->updateProject($id,$request);
+        $project = $this->projectRepository->updateProject($id, $request);
         return response([
             'project' => $project
         ]);
@@ -50,7 +50,8 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function getProjectByManagerPagination($managerId){
+    public function getProjectByManagerPagination($managerId)
+    {
         return $this->projectRepository->getProjectByManagerPagination($managerId);
     }
 
@@ -63,11 +64,21 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function getProjectByEmployee($employeeId){
+    public function getProjectByEmployee($employeeId)
+    {
         $projects = $this->projectRepository->getProjectByEmployee($employeeId);
 
         return response([
             'projects' => $projects
+        ]);
+    }
+
+    public function getProjectProgress()
+    {
+        $progressData = $this->projectRepository->getProjectProgress();
+
+        return response([
+            'progress_data' => $progressData
         ]);
     }
 }

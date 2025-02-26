@@ -29,22 +29,22 @@ class TaskAttachmentRepository implements TaskAttachmentsInterface
 
         $data = [];
 
-        if(!$request->hasFile('files')){
+        if (!$request->hasFile('files')) {
             return $data;
         }
 
-        $uploadedFiles = $this->saveFiles($request->file('files'),'task attachments');
+        $uploadedFiles = $this->saveFiles($request->file('files'), 'task attachments');
 
-        foreach($uploadedFiles as $file){
+        foreach ($uploadedFiles as $file) {
             $data = $file + [
                 'task_id' => $request->task_id,
                 'uploaded_by' => $request->uploaded_by
             ];
 
-           $res = $this->taskAttachment->create($data);
-           $res->load(['task']);
+            $res = $this->taskAttachment->create($data);
+            $res->load(['task']);
 
-           broadcast(new CreateTaskAttachmentEvent($res));
+            broadcast(new CreateTaskAttachmentEvent($res));
         }
 
         return $data;
@@ -54,14 +54,14 @@ class TaskAttachmentRepository implements TaskAttachmentsInterface
     {
         // Tạo thư mục tự động nếu chưa tồn tại
         $folder = 'uploads/' . strtolower(str_replace(' ', '_', $keyword));
-        
+
         if (!Storage::disk('public')->exists($folder)) {
             Storage::disk('public')->makeDirectory($folder); // tạo folder tự động
         }
 
         $uploadedFiles = [];
 
-        foreach($files as $file){
+        foreach ($files as $file) {
             $file_name = time() . '_' . $file->getClientOriginalName();
             $file_path = $file->storeAs($folder, $file_name, 'public'); // dùng storeAs lưu tên file
 
@@ -76,7 +76,19 @@ class TaskAttachmentRepository implements TaskAttachmentsInterface
 
     public function getTaskAttachmentsByTaskId($taskId)
     {
-        $taskAttachments = $this->taskAttachment->where('task_id',$taskId)->orderBy('created_at','desc')->get();
+        $taskAttachments = $this->taskAttachment->where('task_id', $taskId)
+            ->orderBy('created_at', 'desc')->get();
+
+        return $taskAttachments;
+    }
+
+    public function getTaskAttachmentsByProjectId($projectId)
+    {
+        $taskAttachments = $this->taskAttachment->with(['user'])->select('task_attachments.*')
+            ->join('tasks', 'task_attachments.task_id', '=', 'tasks.id')
+            ->join('projects', 'tasks.project_id', '=', 'projects.id')
+            ->where('projects.id', $projectId)->where('task_attachments.file_confrim', 1)
+            ->orderBy('created_at', 'desc')->get();
 
         return $taskAttachments;
     }
@@ -97,16 +109,16 @@ class TaskAttachmentRepository implements TaskAttachmentsInterface
     {
         $file = $this->taskAttachment->with(['task'])->find($fileId);
 
-        $path = public_path('storage/uploads/task_attachments/'. $file->file_name);
+        $path = public_path('storage/uploads/task_attachments/' . $file->file_name);
 
-        if(File::exists($path)){
+        if (File::exists($path)) {
             File::delete($path);
         }
 
         $res = ['id' => $file->id, 'assignee_id' => $file->task->assignee_id];
 
         broadcast(new DeleteTaskAttachmentEvent($res));
-        
+
         $file->delete();
 
         return $file;

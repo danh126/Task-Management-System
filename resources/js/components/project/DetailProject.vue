@@ -186,6 +186,13 @@
                         </div>
                     </template>
                 </draggable>
+
+                <!-- Thông báo -->
+                <div v-if="projectStore.detailProject.tasks.length == 0">
+                    <p class="text-center alert alert-success">
+                        Chưa có nhiệm vụ nào được giao!
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -199,11 +206,61 @@
         </div>
         <div class="file-list-container">
             <ul>
-                <li>
-                    <span class="file-name">file name</span>
-                    <button class="delete-file-btn">🗑</button>
+                <li
+                    v-for="(
+                        file, index
+                    ) in taskAttachmentStore.filesByProjectId"
+                >
+                    <div class="container-file">
+                        <div class="list-files">
+                            <i
+                                :class="[
+                                    'me-2',
+                                    taskAttachmentStore.ClassByFileConfrim[
+                                        file.file_confrim
+                                    ],
+                                ]"
+                            ></i>
+                            <a
+                                :href="file.file_path"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <span class="file-name">{{
+                                    file.file_name
+                                }}</span>
+                            </a>
+
+                            <!-- Quyền của manager -->
+                            <div class="note">
+                                <button
+                                    class="delete-file-btn mt-2"
+                                    @click="
+                                        taskAttachmentStore.deleteFileTaskAttachment(
+                                            index,
+                                            file.id
+                                        )
+                                    "
+                                >
+                                    🗑
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="date-file">
+                            <span>Date: {{ file.created_at }}</span>
+                            <span>Upload By: {{ file.user.name }}</span>
+                        </div>
+                    </div>
                 </li>
             </ul>
+
+            <!-- Thông báo -->
+            <div v-if="taskAttachmentStore.filesByProjectId.length == 0">
+                <p class="text-center alert alert-success">
+                    Chưa có file nào được tải lên!
+                </p>
+            </div>
         </div>
     </div>
 
@@ -230,6 +287,8 @@
 <script setup>
 import { useProjectStore } from "../../stores/projectStore";
 import { useAuthStore } from "../../stores/authStore";
+import { useTaskAttachmentStore } from "../../stores/taskAttachmentStore";
+
 import { onBeforeRouteLeave } from "vue-router";
 
 import draggable from "vuedraggable";
@@ -238,6 +297,23 @@ import { onMounted } from "vue";
 
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
+const taskAttachmentStore = useTaskAttachmentStore();
+
+onMounted(() => {
+    taskAttachmentStore.getFilesByProjectId(projectStore.detailProject.id);
+
+    // Lắng nghe sự kiện task attachment delete
+    taskAttachmentStore.eventStore.listenToEvent(
+        "delete-task-attachment",
+        ".DeleteTaskAttachmentEvent",
+        (d) => {
+            taskAttachmentStore.filesByProjectId =
+                taskAttachmentStore.filesByProjectId.filter(
+                    (f) => Number(f.id) !== Number(d.id)
+                );
+        }
+    );
+});
 
 // Được gọi trước khi component bị hủy
 onBeforeRouteLeave(() => {

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 interface ProjectRepositoryInterface
 {
     public function getProjects();
+    public function getProjectProgress();
     public function getProject($projectId);
     public function getProjectByManager($managerId);
     public function getProjectByManagerPagination($managerId);

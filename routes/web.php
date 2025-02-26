@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/projects-by-manager-pagination/{id}', [ProjectController::class,'getProjectByManagerPagination']);
     Route::get('/projects-by-manager/{id}', [ProjectController::class,'getProjectByManager']);
     Route::get('/projects-by-employee/{id}', [ProjectController::class,'getProjectByEmployee']);
+    Route::get('/projects-progress', [ProjectController::class,'getProjectProgress']);
     
     // Tasks
     Route::resource('/tasks',TaskController::class);
@@ -55,6 +56,7 @@ Route::middleware('auth')->group(function(){
     // Task Attachment
     Route::resource('task-attachment', TaskAttachmentController::class);
     Route::get('/task-attachments/{id}',[TaskAttachmentController::class, 'getTaskAttachmentsByTaskId']);
+    Route::get('/task-attachments-by-project/{id}',[TaskAttachmentController::class, 'getTaskAttachmentsByProjectId']);
     Route::post('/task-attachments-file-confrim/{id}',[TaskAttachmentController::class, 'fileConfrim']);
 });
 

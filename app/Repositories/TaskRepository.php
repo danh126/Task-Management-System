@@ -13,7 +13,8 @@ use App\Models\User;
 use App\Notifications\TaskAssignedNotification;
 use Illuminate\Http\Request;
 
-class TaskRepository implements TaskRepositoryInterface{
+class TaskRepository implements TaskRepositoryInterface
+{
     private $task;
 
     public function __construct(Task $task)
@@ -23,30 +24,30 @@ class TaskRepository implements TaskRepositoryInterface{
 
     public function getTasksByManager($managerId)
     {
-        $tasks = $this->task->select('tasks.*', 'projects.name as project_name','users.name as user_name')
-        ->join('projects','tasks.project_id','=','projects.id')
-        ->join('users','users.id','=','tasks.assignee_id')
-        ->where('projects.manager_id', $managerId)
-        ->orderBy('key_priority','asc')->paginate(5);
-        
+        $tasks = $this->task->select('tasks.*', 'projects.name as project_name', 'users.name as user_name')
+            ->join('projects', 'tasks.project_id', '=', 'projects.id')
+            ->join('users', 'users.id', '=', 'tasks.assignee_id')
+            ->where('projects.manager_id', $managerId)
+            ->orderBy('key_priority', 'asc')->paginate(5);
+
         return $tasks;
     }
-    
+
     public function getTasksByEmployee($employeeId)
     {
         $tasks = $this->task->select('tasks.*', 'projects.name as project_name')
-        ->join('projects','tasks.project_id','=','projects.id')
-        ->where('tasks.assignee_id', $employeeId)->get();
+            ->join('projects', 'tasks.project_id', '=', 'projects.id')
+            ->where('tasks.assignee_id', $employeeId)->get();
 
         return $tasks;
     }
 
     public function getTasks()
     {
-        $tasks = $this->task->select('tasks.*', 'projects.name as project_name','users.name as user_name')
-        ->join('projects','tasks.project_id','=','projects.id')
-        ->join('users','users.id','=','tasks.assignee_id')
-        ->orderBy('key_priority','asc')->paginate(5);
+        $tasks = $this->task->select('tasks.*', 'projects.name as project_name', 'users.name as user_name')
+            ->join('projects', 'tasks.project_id', '=', 'projects.id')
+            ->join('users', 'users.id', '=', 'tasks.assignee_id')
+            ->orderBy('key_priority', 'asc')->paginate(5);
 
         return $tasks;
     }
@@ -56,14 +57,14 @@ class TaskRepository implements TaskRepositoryInterface{
         $project = Project::find($request->project_id);
 
         $request->validate([
-            'title' => ['required','max:150'],
+            'title' => ['required', 'max:150'],
             'description' => ['required'],
             'due_date' => [
-                            'required',
-                            'date',
-                            'before:'. optional($project)->end_date,
-                            'after:'. optional($project)->start_date
-                        ],
+                'required',
+                'date',
+                'before:' . optional($project)->end_date,
+                'after:' . optional($project)->start_date
+            ],
             'project_id' => ['required'],
             'assignee_id' => ['required']
         ]);
@@ -71,11 +72,11 @@ class TaskRepository implements TaskRepositoryInterface{
         $task = $this->task->create($request->toArray());
 
         // Eager Load quan hệ assignee và project
-        $task->load(['assignee','project']);
+        $task->load(['assignee', 'project']);
 
         // Gửi thông báo reail-time
         broadcast(new CreateTask($task));
-    
+
         // Gửi mail thông báo
         $task->assignee->notify(new TaskAssignedNotification($task));
 
@@ -87,14 +88,14 @@ class TaskRepository implements TaskRepositoryInterface{
         $project = Project::find($request->project_id);
 
         $request->validate([
-            'title' => ['required','max:150'],
+            'title' => ['required', 'max:150'],
             'description' => ['required'],
             'due_date' => [
-                            'required',
-                            'date',
-                            'before:'. optional($project)->end_date,
-                            'after:'. optional($project)->start_date
-                        ],
+                'required',
+                'date',
+                'before:' . optional($project)->end_date,
+                'after:' . optional($project)->start_date
+            ],
             'project_id' => ['required']
         ]);
 
@@ -110,9 +111,9 @@ class TaskRepository implements TaskRepositoryInterface{
     public function updateTaskStatus($taskId, Request $request)
     {
         $request->validate([
-            'status' => ['required','max:11']
+            'status' => ['required', 'max:11']
         ]);
-        
+
         $task = $this->task->find($taskId);
         $task->update($request->toArray());
 
@@ -125,7 +126,7 @@ class TaskRepository implements TaskRepositoryInterface{
     public function updatePriority($taskId, Request $request)
     {
         $request->validate([
-            'priority' => ['required','max:11'],
+            'priority' => ['required', 'max:11'],
             'key_priority' => ['required']
         ]);
 
@@ -139,7 +140,11 @@ class TaskRepository implements TaskRepositoryInterface{
     {
         $task = $this->task->find($taskId);
 
-        $res = ['id' => $taskId, 'assignee_id' => $task->assignee_id, 'status' => $task->status];
+        $res = [
+            'id' => $taskId,
+            'assignee_id' => $task->assignee_id,
+            'status' => $task->status
+        ];
 
         // Gửi thông báo real-time
         broadcast(new DeleteTask($res));

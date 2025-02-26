@@ -41,7 +41,7 @@ class TaskController extends Controller
     public function update(Request $request, string $id)
     {
         $task = $this->taskRepository->updateTask($id, $request);
-        
+
         return response([
             'task' => $task
         ]);
@@ -86,7 +86,7 @@ class TaskController extends Controller
     public function updateTaskPriority($taskId, Request $request)
     {
         $task = $this->taskRepository->updatePriority($taskId, $request);
-        
+
         return response([
             'task' => $task
         ]);

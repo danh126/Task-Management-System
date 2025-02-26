@@ -98,7 +98,7 @@
                     <!-- Ghi chú -->
                     <div
                         class="note"
-                        v-if="taskStore.selectedFile.length === 0"
+                        v-if="taskAttachmentStore.selectedFile.length === 0"
                     >
                         <p>
                             <i class="fa fa-adjust me-2 text-danger"></i> Chưa
@@ -110,8 +110,35 @@
                         </p>
                     </div>
 
+                    <!-- Thanh tiến trình uploads -->
+                    <div
+                        v-if="taskAttachmentStore.progress > 0"
+                        class="upload-box"
+                    >
+                        <button
+                            class="close-btn"
+                            @click="taskAttachmentStore.progress = 0"
+                        >
+                            X
+                        </button>
+                        <p v-if="taskAttachmentStore.progress < 100">
+                            Đang tải lên: {{ taskAttachmentStore.progress }}%
+                        </p>
+                        <p v-else>
+                            Hoàn thành: {{ taskAttachmentStore.progress }}%
+                        </p>
+                        <div class="progress-container">
+                            <div
+                                class="progress-bar"
+                                :style="{
+                                    width: taskAttachmentStore.progress + '%',
+                                }"
+                            ></div>
+                        </div>
+                    </div>
+
                     <!-- Files chọn để uploads -->
-                    <div v-if="taskStore.selectedFile.length > 0">
+                    <div v-if="taskAttachmentStore.selectedFile.length > 0">
                         <p class="bg-info-subtle p-2 text-center">
                             File bạn đã chọn
                         </p>
@@ -120,7 +147,7 @@
                                 <li
                                     v-for="(
                                         file, index
-                                    ) in taskStore.selectedFile"
+                                    ) in taskAttachmentStore.selectedFile"
                                 >
                                     <span class="file-name">{{
                                         file.name
@@ -128,7 +155,9 @@
                                     <button
                                         class="delete-file-btn"
                                         @click="
-                                            taskStore.deleteFileSelect(index)
+                                            taskAttachmentStore.deleteFileSelect(
+                                                index
+                                            )
                                         "
                                     >
                                         🗑
@@ -138,7 +167,11 @@
                         </div>
                         <button
                             class="btn btn-primary mt-2"
-                            @click="taskStore.uploadFiles"
+                            @click="
+                                taskAttachmentStore.uploadFiles(
+                                    taskStore.taskDetail
+                                )
+                            "
                         >
                             <i
                                 class="fas fa-file-upload"
@@ -153,7 +186,9 @@
                         <!-- Thông báo -->
                         <div
                             class="alert alert-success text-center"
-                            v-if="taskStore.taskAttachments.length === 0"
+                            v-if="
+                                taskAttachmentStore.taskAttachments.length === 0
+                            "
                         >
                             Chưa có file nào được tải lên!
                         </div>
@@ -162,74 +197,87 @@
                             <li
                                 v-for="(
                                     file, index
-                                ) in taskStore.taskAttachments"
+                                ) in taskAttachmentStore.taskAttachments"
                             >
-                                <i
-                                    :class="[
-                                        'me-2',
-                                        taskStore.ClassByFileConfrim[
-                                            file.file_confrim
-                                        ],
-                                    ]"
-                                ></i>
-                                <a
-                                    :href="file.file_path"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <span class="file-name">{{
-                                        file.file_name
-                                    }}</span>
-                                </a>
-                                <span>Date: {{ file.created_at }}</span>
-
-                                <!-- Quyền của manager -->
-                                <div
-                                    class="note"
-                                    v-if="
-                                        taskStore.authStore.user.role ===
-                                            'manager' && file.file_confrim === 0
-                                    "
-                                >
-                                    <button
-                                        class="btn btn-primary me-2"
-                                        @click="taskStore.fileConfrim(file.id)"
+                                <div class="list-files-2">
+                                    <i
+                                        :class="[
+                                            'me-2',
+                                            taskAttachmentStore
+                                                .ClassByFileConfrim[
+                                                file.file_confrim
+                                            ],
+                                        ]"
+                                    ></i>
+                                    <a
+                                        :href="file.file_path"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                     >
-                                        <i class="fa fa-check-circle me-2"></i
-                                        >Duyệt
-                                    </button>
-                                    <button
-                                        class="delete-file-btn"
-                                        @click="
-                                            taskStore.deleteFileTaskAttachment(
-                                                index,
-                                                file.id
-                                            )
+                                        <span class="file-name">{{
+                                            file.file_name
+                                        }}</span>
+                                    </a>
+
+                                    <!-- Quyền của manager -->
+                                    <div
+                                        class="note"
+                                        v-if="
+                                            taskStore.authStore.user.role ===
+                                                'manager' &&
+                                            file.file_confrim === 0
                                         "
                                     >
-                                        🗑
-                                    </button>
+                                        <button
+                                            class="btn btn-primary mt-2 me-2"
+                                            @click="
+                                                taskAttachmentStore.fileConfrim(
+                                                    file.id
+                                                )
+                                            "
+                                        >
+                                            <i
+                                                class="fa fa-check-circle me-2"
+                                            ></i
+                                            >Duyệt
+                                        </button>
+                                        <button
+                                            class="delete-file-btn mt-2"
+                                            @click="
+                                                taskAttachmentStore.deleteFileTaskAttachment(
+                                                    index,
+                                                    file.id
+                                                )
+                                            "
+                                        >
+                                            🗑
+                                        </button>
+                                    </div>
+
+                                    <!-- Quyền của employee -->
+                                    <div
+                                        v-if="
+                                            taskStore.authStore.user.role ===
+                                                'employee' &&
+                                            file.file_confrim === 0
+                                        "
+                                    >
+                                        <button
+                                            class="delete-file-btn mt-2"
+                                            @click="
+                                                taskAttachmentStore.deleteFileTaskAttachment(
+                                                    index,
+                                                    file.id
+                                                )
+                                            "
+                                        >
+                                            🗑
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <!-- Quyền của employee -->
-                                <div
-                                    v-if="
-                                        taskStore.authStore.user.role ===
-                                            'employee' &&
-                                        file.file_confrim === 0
-                                    "
-                                >
-                                    <button
-                                        class="delete-file-btn"
-                                        @click="
-                                            taskStore.deleteFileTaskAttachment(
-                                                index,
-                                                file.id
-                                            )
-                                        "
-                                    >
-                                        🗑
-                                    </button>
+                                <div class="date-file-2">
+                                    <span>Date: {{ file.created_at }}</span>
                                 </div>
                             </li>
                         </ul>
@@ -242,10 +290,12 @@
 
 <script setup>
 import { useTaskStore } from "../../stores/taskStore";
+import { useTaskAttachmentStore } from "../../stores/taskAttachmentStore";
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 const taskStore = useTaskStore();
+const taskAttachmentStore = useTaskAttachmentStore();
 
 // Upload file
 const fileInput = ref(null);
@@ -257,18 +307,18 @@ const triggerFileInput = () => {
 // Hàm input file change
 const handleFileSelect = (event) => {
     const files = event.target.files;
-    taskStore.setFiles(files); // lưu file khi chọn
+    taskAttachmentStore.setFiles(files); // lưu file khi chọn
 };
 
 onMounted(() => {
-    taskStore.getTaskAttachments(taskStore.taskDetail.id);
+    taskAttachmentStore.getTaskAttachments(taskStore.taskDetail.id);
 
     // Lắng nghe sự kiện task attachment created
     taskStore.eventStore.listenToEvent(
         "create-task-attachment",
         ".CreateTaskAttachmentEvent",
         (d) => {
-            taskStore.taskAttachments.unshift(d);
+            taskAttachmentStore.taskAttachments.unshift(d);
         }
     );
 
@@ -277,9 +327,10 @@ onMounted(() => {
         "delete-task-attachment",
         ".DeleteTaskAttachmentEvent",
         (d) => {
-            taskStore.taskAttachments = taskStore.taskAttachments.filter(
-                (f) => Number(f.id) !== Number(d.id)
-            );
+            taskAttachmentStore.taskAttachments =
+                taskAttachmentStore.taskAttachments.filter(
+                    (f) => Number(f.id) !== Number(d.id)
+                );
         }
     );
 
@@ -288,7 +339,7 @@ onMounted(() => {
         "updated-task-attachment",
         ".UpdateTaskAttachmentEvent",
         (d) => {
-            const file = taskStore.taskAttachments.find(
+            const file = taskAttachmentStore.taskAttachments.find(
                 (file) => Number(file.id) === Number(d.id)
             );
 
@@ -299,5 +350,9 @@ onMounted(() => {
             file.file_confrim = 1;
         }
     );
+});
+
+onBeforeUnmount(() => {
+    taskAttachmentStore.progress = 0;
 });
 </script>

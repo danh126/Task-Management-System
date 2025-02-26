@@ -6,14 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task_attachment extends Model
 {
-    protected $fillable = ['id', 'task_id', 'file_name', 'file_path', 'uploaded_by', 'file_confrim'];
+    protected $fillable = [
+        'id',
+        'task_id',
+        'file_name',
+        'file_path',
+        'uploaded_by',
+        'file_confrim'
+    ];
 
-    public function task(){
+    public function task()
+    {
         return $this->belongsTo(Task::class);
     }
 
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 
     // Định dạng lại date
