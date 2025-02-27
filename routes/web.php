@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskAttachmentController;
+use App\Http\Controllers\TaskCommentController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,7 @@ Route::middleware('auth')->group(function(){
     Route::resource('users', UserController::class);
     Route::get('/managers', [UserController::class,'getManagers']);
     Route::get('/employees', [UserController::class,'getEmployees']);
+    Route::post('/user/change-password/{id}', [UserController::class,'changePassword']);
 
     // Projects
     Route::resource('projects', ProjectController::class);
@@ -54,10 +56,14 @@ Route::middleware('auth')->group(function(){
     Route::post('/update-task-priority/{id}',[TaskController::class,'updateTaskPriority']);
 
     // Task Attachment
-    Route::resource('task-attachment', TaskAttachmentController::class);
-    Route::get('/task-attachments/{id}',[TaskAttachmentController::class, 'getTaskAttachmentsByTaskId']);
+    Route::resource('task-attachments', TaskAttachmentController::class);
+    Route::get('/task-attachments-by-task-id/{id}',[TaskAttachmentController::class, 'getTaskAttachmentsByTaskId']);
     Route::get('/task-attachments-by-project/{id}',[TaskAttachmentController::class, 'getTaskAttachmentsByProjectId']);
     Route::post('/task-attachments-file-confrim/{id}',[TaskAttachmentController::class, 'fileConfrim']);
+
+    // Task Comment
+    Route::resource('task-comments', TaskCommentController::class);
+    Route::get('task-comments-by-task-id/{id}', [TaskCommentController::class, 'getTaskCommentsByTaskId']);
 });
 
 require __DIR__.'/auth.php';

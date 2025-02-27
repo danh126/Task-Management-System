@@ -3,7 +3,6 @@ import { computed, ref } from "vue";
 import axios from "axios";
 
 export const useAuthStore = defineStore("authStore", () => {
-    // Define
     const user = ref(window.__user__);
     const listUsers = ref({});
     const selectedUser = ref(null);
@@ -19,6 +18,12 @@ export const useAuthStore = defineStore("authStore", () => {
         name: "",
         email: "",
         role: "",
+    });
+
+    const changePassword = ref({
+        old_pass: "",
+        new_pass: "",
+        confirm_pass: "",
     });
 
     const listRoles = ref([
@@ -117,7 +122,7 @@ export const useAuthStore = defineStore("authStore", () => {
         }
     };
 
-    // Hàm validatedForm
+    // Hàm validatedForm create account
     const isFormValid = computed(() => {
         return (
             account.value.name !== "" &&
@@ -164,28 +169,133 @@ export const useAuthStore = defineStore("authStore", () => {
         }
     };
 
-    //getListUsers(); // gọi trực tiếp trong store hoặc gọi ở component
+    // Close change password
+    const closeChangePass = () => {
+        click.value = false;
+
+        changePassword.value = {
+            old_pass: "",
+            new_pass: "",
+            confirm_pass: "",
+        };
+    };
+
+    // Required all input change password
+    const requiredChangePass = computed(() => {
+        return (
+            changePassword.value.old_pass !== "" &&
+            changePassword.value.new_pass !== "" &&
+            changePassword.value.confirm_pass !== ""
+        );
+    });
+
+    // Validated form change password
+    const validatedChangePass = () => {
+        const new_pass = changePassword.value.new_pass;
+        const confirm_pass = changePassword.value.confirm_pass;
+
+        const specialCharPattern = /[!#$%^&*(),?":{}|<>]/g;
+
+        if (specialCharPattern.test(new_pass)) {
+            notification.value = {
+                message: "Mật khẩu không được chứa ký tự đặc biệt!",
+            };
+
+            setTimeout(() => {
+                notification.value = null;
+            }, 2500);
+
+            return false;
+        }
+
+        if (new_pass !== confirm_pass) {
+            notification.value = { message: "Mật khẩu xác nhận không khớp!" };
+
+            setTimeout(() => {
+                notification.value = null;
+            }, 2500);
+
+            return false;
+        } else if (new_pass.length < 8) {
+            notification.value = {
+                message: "Độ dài mật khẩu mới phải trên 8 ký tự!",
+            };
+
+            setTimeout(() => {
+                notification.value = null;
+            }, 2500);
+
+            return false;
+        }
+
+        return true;
+    };
+
+    // Change password
+    const updatePassword = async () => {
+        if (validatedChangePass()) {
+            try {
+                const response = await axios.post(
+                    `/user/change-password/${user.value.id}`,
+                    {
+                        old_pass: changePassword.value.old_pass,
+                        new_pass: changePassword.value.new_pass,
+                        confirm_pass: changePassword.value.confirm_pass,
+                    }
+                );
+
+                if (response.data.user.check_pass) {
+                    notification.value = {
+                        message: response.data.user.check_pass,
+                    };
+
+                    setTimeout(() => {
+                        notification.value = null;
+                    }, 2500);
+
+                    return;
+                }
+
+                alertType.value = "alert-success";
+                notification.value = {
+                    message: "Cập nhật mật khẩu mới thành công!",
+                };
+
+                setTimeout(() => {
+                    notification.value = null;
+                    alertType.value = "alert-danger";
+                    closeChangePass();
+                }, 2500);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    };
 
     return {
         listRoles,
         listUsers,
-        getListUsers,
         selectedUser,
         clickCreateAccount,
-        findUser,
-        updateRole,
         account,
-        closeCreateAccount,
         user,
-        logout,
         deleteUser,
-        clickDeleteUser,
-        confirmDelUser,
-        createAccount,
         isFormValid,
         alertType,
         notification,
-        closeModal,
         click,
+        changePassword,
+        requiredChangePass,
+        findUser,
+        updateRole,
+        clickDeleteUser,
+        confirmDelUser,
+        createAccount,
+        getListUsers,
+        closeCreateAccount,
+        closeModal,
+        logout,
+        closeChangePass,
+        updatePassword,
     };
 });

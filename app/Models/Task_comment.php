@@ -22,4 +22,12 @@ class Task_comment extends Model
     {
         return $this->belongsTo(Task::class);
     }
+
+    // Định dạng lại date
+    protected $dates = ['created_at'];
+
+    public function serializeDate(\DateTimeInterface $date)
+    {
+        return $date->format('d-m-Y H:i');
+    }
 }

@@ -64,13 +64,61 @@
             <!-- Bình luận liên quan -->
             <div class="col-lg-4 col-md-4 comment-task">
                 <h3>Bình luận</h3>
-                <div class="alert alert-success text-center">
+
+                <!-- Comments -->
+                <div
+                    class="content"
+                    v-if="taskCommentStore.task_comments.length > 0"
+                >
+                    <div
+                        v-for="comment in taskCommentStore.task_comments"
+                        class="comment"
+                    >
+                        <div class="comment-header">
+                            <p>{{ comment.user.name }}</p>
+                            <span
+                                v-if="
+                                    taskCommentStore.authStore.user.id ===
+                                    comment.user.id
+                                "
+                                @click="
+                                    taskCommentStore.deleteTaskComment(
+                                        comment.id
+                                    )
+                                "
+                                >X</span
+                            >
+                        </div>
+
+                        <div class="comment-footer">
+                            <p>{{ comment.comment }}</p>
+                            <span>{{ comment.created_at }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông báo -->
+                <div class="alert alert-success text-center" v-else>
                     Chưa có bình luận nào!
                 </div>
-                <div class="content" v-if="taskStore.comments.length > 0"></div>
+
+                <!-- Message  -->
                 <div class="button">
-                    <input class="form-control" type="text" />
-                    <button class="btn btn-primary">Gửi</button>
+                    <input
+                        class="form-control"
+                        type="text"
+                        v-model="taskCommentStore.task_comment"
+                    />
+                    <button
+                        class="btn btn-primary"
+                        @click="
+                            taskCommentStore.createTaskComment(
+                                taskStore.taskDetail.id
+                            )
+                        "
+                    >
+                        Gửi
+                    </button>
                 </div>
             </div>
 
@@ -137,6 +185,17 @@
                         </div>
                     </div>
 
+                    <!-- Thông báo -->
+                    <div
+                        class="alert alert-success text-center"
+                        v-if="
+                            taskAttachmentStore.taskAttachments.length == 0 &&
+                            taskAttachmentStore.selectedFile.length == 0
+                        "
+                    >
+                        Chưa có file nào được tải lên!
+                    </div>
+
                     <!-- Files chọn để uploads -->
                     <div v-if="taskAttachmentStore.selectedFile.length > 0">
                         <p class="bg-info-subtle p-2 text-center">
@@ -183,16 +242,6 @@
 
                     <!-- Danh sách file liên quan -->
                     <div class="file-list-container" v-else>
-                        <!-- Thông báo -->
-                        <div
-                            class="alert alert-success text-center"
-                            v-if="
-                                taskAttachmentStore.taskAttachments.length === 0
-                            "
-                        >
-                            Chưa có file nào được tải lên!
-                        </div>
-
                         <ul>
                             <li
                                 v-for="(
@@ -291,30 +340,36 @@
 <script setup>
 import { useTaskStore } from "../../stores/taskStore";
 import { useTaskAttachmentStore } from "../../stores/taskAttachmentStore";
+import { useTaskCommentStore } from "../../stores/taskCommentStore";
 
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
 const taskStore = useTaskStore();
 const taskAttachmentStore = useTaskAttachmentStore();
+const taskCommentStore = useTaskCommentStore();
 
 // Upload file
 const fileInput = ref(null);
 
 const triggerFileInput = () => {
-    fileInput.value.click(); // Kích hoạt input file khi nhấn button
+    fileInput.value.click();
 };
 
 // Hàm input file change
 const handleFileSelect = (event) => {
     const files = event.target.files;
-    taskAttachmentStore.setFiles(files); // lưu file khi chọn
+    taskAttachmentStore.setFiles(files);
 };
 
 onMounted(() => {
+    // Lấy danh sách file liên quan
     taskAttachmentStore.getTaskAttachments(taskStore.taskDetail.id);
 
+    // Lấy danh sách comment liên quan
+    taskCommentStore.getTaskCommentsByTaskId(taskStore.taskDetail.id);
+
     // Lắng nghe sự kiện task attachment created
-    taskStore.eventStore.listenToEvent(
+    taskAttachmentStore.eventStore.listenToEvent(
         "create-task-attachment",
         ".CreateTaskAttachmentEvent",
         (d) => {
@@ -323,7 +378,7 @@ onMounted(() => {
     );
 
     // Lắng nghe sự kiện task attachment delete
-    taskStore.eventStore.listenToEvent(
+    taskAttachmentStore.eventStore.listenToEvent(
         "delete-task-attachment",
         ".DeleteTaskAttachmentEvent",
         (d) => {
@@ -335,7 +390,7 @@ onMounted(() => {
     );
 
     // Lắng nghe sự kiện task attachment updated
-    taskStore.eventStore.listenToEvent(
+    taskAttachmentStore.eventStore.listenToEvent(
         "updated-task-attachment",
         ".UpdateTaskAttachmentEvent",
         (d) => {
@@ -350,9 +405,33 @@ onMounted(() => {
             file.file_confrim = 1;
         }
     );
+
+    // Lắng nghe sự kiện task comment created
+    taskCommentStore.eventStore.listenToEvent(
+        "create-task-comment",
+        ".CreateTaskCommentEvent",
+        (d) => {
+            taskCommentStore.task_comments.unshift(d);
+        }
+    );
+
+    // Lắng nghe sự kiện task comment delete
+    taskCommentStore.eventStore.listenToEvent(
+        "delete-task-comment",
+        ".DeleteTaskCommentEvent",
+        (d) => {
+            taskCommentStore.task_comments =
+                taskCommentStore.task_comments.filter(
+                    (f) => Number(f.id) !== Number(d.id)
+                );
+        }
+    );
 });
 
 onBeforeUnmount(() => {
-    taskAttachmentStore.progress = 0;
+    // Clear store
+
+    taskAttachmentStore.clearTaskAttachmentStore();
+    taskCommentStore.clearTaskCommentStore();
 });
 </script>

@@ -35,3 +35,11 @@ Broadcast::channel('delete-task-attachment', function ($user) {
 Broadcast::channel('updated-task-attachment', function ($user) {
     return in_array($user->role, ['manager','employee']);
 });
+
+Broadcast::channel('create-task-comment', function ($user) {
+    return in_array($user->role, ['manager','employee']);
+});
+
+Broadcast::channel('delete-task-comment', function ($user) {
+    return in_array($user->role, ['manager','employee']);
+});

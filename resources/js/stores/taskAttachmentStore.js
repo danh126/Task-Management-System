@@ -46,7 +46,7 @@ export const useTaskAttachmentStore = defineStore("taskAttachmentStore", () => {
         });
 
         try {
-            await axios.post("/task-attachment", formData, {
+            await axios.post("/task-attachments", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -66,7 +66,9 @@ export const useTaskAttachmentStore = defineStore("taskAttachmentStore", () => {
     // Hàm lấy danh sách file task attachments
     const getTaskAttachments = async (id) => {
         try {
-            const response = await axios.get(`/task-attachments/${id}`);
+            const response = await axios.get(
+                `/task-attachments-by-task-id/${id}`
+            );
 
             taskAttachments.value = response.data.task_attachments;
         } catch (error) {
@@ -77,7 +79,7 @@ export const useTaskAttachmentStore = defineStore("taskAttachmentStore", () => {
     // Hàm xóa file attachment
     const deleteFileTaskAttachment = async (index, id) => {
         try {
-            await axios.delete("/task-attachment/" + id);
+            await axios.delete("/task-attachments/" + id);
         } catch (error) {
             console.log(error);
         }
@@ -105,6 +107,14 @@ export const useTaskAttachmentStore = defineStore("taskAttachmentStore", () => {
         }
     };
 
+    // Clear task attachment store
+    const clearTaskAttachmentStore = () => {
+        selectedFile.value = [];
+        filesByProjectId.value = [];
+        taskAttachments.value = [];
+        progress.value = 0;
+    };
+
     return {
         eventStore,
         selectedFile,
@@ -119,5 +129,6 @@ export const useTaskAttachmentStore = defineStore("taskAttachmentStore", () => {
         deleteFileTaskAttachment,
         fileConfrim,
         getFilesByProjectId,
+        clearTaskAttachmentStore,
     };
 });

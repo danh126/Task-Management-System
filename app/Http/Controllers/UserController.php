@@ -69,4 +69,13 @@ class UserController extends Controller
             'employees' => $employees
         ]);
     }
+
+    public function changePassword ($userId, Request $request)
+    {
+        $user = $this->userRepository->changePassword($userId, $request);
+
+        return response([
+            'user' => $user
+        ]);
+    }
 }

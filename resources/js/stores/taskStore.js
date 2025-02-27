@@ -35,9 +35,6 @@ export const useTaskStore = defineStore("taskStore", () => {
     const deleteTask = ref(null);
     const indexTask = ref(null);
 
-    // Comments
-    const comments = ref([]);
-
     const task = ref({
         title: "",
         description: "",
@@ -353,7 +350,6 @@ export const useTaskStore = defineStore("taskStore", () => {
         clickCreate,
         listTasks,
         taskDetail,
-        comments,
         taskEdit,
         deleteTask,
         listStatus,

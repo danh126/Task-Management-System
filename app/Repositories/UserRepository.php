@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interface\UserRepositoryInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -55,6 +56,34 @@ class UserRepository implements UserRepositoryInterface
             $user->update($request->toArray());
             return $user;
         }
+    }
+
+    public function changePassword($userId, Request $request)
+    {
+        $request->validate([
+            'old_pass' => ['required', 'max:64'],
+            'new_pass' => ['required', 'max:64'],
+            'confirm_pass' => ['required', 'same:new_pass']
+        ], [
+            'old_pass.max' => 'Độ dài mật khẩu tối đa 64 ký tự!',
+            'new_pass.max' => 'Độ dài mật khẩu tối đa 64 ký tự!',
+            'confirm_pass.same' => 'Mật khẩu xác nhận không khớp!'
+        ]);
+
+        $user = $this->user->find($userId);
+
+        if (!Hash::check($request->old_pass, $user->password)) {
+            $res = ['check_pass' => 'Mật khẩu cũ không chính xác!'];
+
+            return $res;
+        }
+
+        $newPass = bcrypt($request->new_pass);
+
+        $user->password = $newPass;
+        $user->save();
+
+        return $user;
     }
 
     public function deleteUser($userId)
