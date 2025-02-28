@@ -28,7 +28,7 @@ class TaskRepository implements TaskRepositoryInterface
             ->join('projects', 'tasks.project_id', '=', 'projects.id')
             ->join('users', 'users.id', '=', 'tasks.assignee_id')
             ->where('projects.manager_id', $managerId)
-            ->orderBy('key_priority', 'asc')->paginate(5);
+            ->orderBy('created_at', 'desc')->paginate(5);
 
         return $tasks;
     }

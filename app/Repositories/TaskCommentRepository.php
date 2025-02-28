@@ -10,16 +10,16 @@ use Illuminate\Http\Request;
 
 class TaskCommentRepository implements TaskCommentInterface
 {
-     private $task_comment;
+     private $taskComment;
 
-     public function __construct(Task_comment $task_comment)
+     public function __construct(Task_comment $taskComment)
      {
-          $this->task_comment = $task_comment;
+          $this->taskComment = $taskComment;
      }
 
      public function getTaskCommentsByTaskId($taskId)
      {
-          $task_comments = $this->task_comment->with(['user'])->where('task_id', $taskId)
+          $task_comments = $this->taskComment->with(['user'])->where('task_id', $taskId)
                ->orderBy('created_at', 'desc')->get();
 
           return $task_comments;
@@ -33,7 +33,7 @@ class TaskCommentRepository implements TaskCommentInterface
                'comment' => ['required', 'max:200']
           ]);
 
-          $task_comment = $this->task_comment->create($request->toArray());
+          $task_comment = $this->taskComment->create($request->toArray());
           $task_comment->load(['user', 'task']);
 
           broadcast(new CreateTaskCommentEvent($task_comment));
@@ -43,11 +43,12 @@ class TaskCommentRepository implements TaskCommentInterface
 
      public function deleteTaskComment($taskCommentId)
      {
-          $task_comment = $this->task_comment->with(['task'])->find($taskCommentId);
+          $task_comment = $this->taskComment->select('id', 'task_id')->find($taskCommentId);
+          $assignee_id = $task_comment->task()->pluck('assignee_id')->first();
 
           $res = [
                'id' => $task_comment->id,
-               'assignee_id' => $task_comment->task->assignee_id
+               'assignee_id' => $assignee_id
           ];
 
           $task_comment->delete();

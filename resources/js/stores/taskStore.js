@@ -4,12 +4,14 @@ import { ref, computed, watch } from "vue";
 
 import { useAuthStore } from "./authStore";
 import { useEventStore } from "./eventStore";
+import { useTaskLogStore } from "./taskLogStore";
 
 import { useRouter } from "vue-router";
 
 export const useTaskStore = defineStore("taskStore", () => {
     const authStore = useAuthStore();
     const eventStore = useEventStore();
+    const taskLogStore = useTaskLogStore();
     const router = useRouter();
 
     const listTasks = ref([]);
@@ -264,6 +266,14 @@ export const useTaskStore = defineStore("taskStore", () => {
             // Xác định status của cột dược kéo đến
             const newStatus = event.to.getAttribute("data-status");
 
+            // Thêm vào task log
+            await taskLogStore.createTaskLog(
+                task.id,
+                authStore.user.id,
+                task.status,
+                newStatus
+            );
+
             if (task.status !== newStatus) {
                 task.status = newStatus;
 
@@ -273,7 +283,7 @@ export const useTaskStore = defineStore("taskStore", () => {
                 });
             }
         } catch (e) {
-            //
+            console.log(e.response.data);
         }
     };
 

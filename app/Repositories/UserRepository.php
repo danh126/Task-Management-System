@@ -41,7 +41,7 @@ class UserRepository implements UserRepositoryInterface
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt('123456789'),
-            'email_verified_at' => time(),
+            'email_verified_at' => now(),
             'role' => $request->role
         ]);
 
@@ -88,8 +88,14 @@ class UserRepository implements UserRepositoryInterface
 
     public function deleteUser($userId)
     {
-        $user = User::where('id', $userId)->delete();
-        return $user;
+        $user = User::find($userId);
+
+        if ($user) {
+            $user->delete();
+            return $user;
+        }
+
+        return null;
     }
 
     public function getListManagers()

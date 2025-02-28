@@ -2,63 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Interface\TaskLogRepositoryInterface;
 use Illuminate\Http\Request;
 
 class TaskLogController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $taskLogRepository;
+
+    public function __construct(TaskLogRepositoryInterface $taskLogRepository)
+    {
+        $this->taskLogRepository = $taskLogRepository;
+    }
+
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $task_log = $this->taskLogRepository->createTaskLog($request);
+
+        return response([
+            'task_log' => $task_log,
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getTaskLogByTaskId(string $taskId)
+    {
+        $task_logs = $this->taskLogRepository->getTaskLogByTaskId($taskId);
+
+        return response([
+            'task_logs' => $task_logs,
+        ]);
     }
 }

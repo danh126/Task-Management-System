@@ -61,67 +61,6 @@
                 </div>
             </div>
 
-            <!-- Bình luận liên quan -->
-            <div class="col-lg-4 col-md-4 comment-task">
-                <h3>Bình luận</h3>
-
-                <!-- Comments -->
-                <div
-                    class="content"
-                    v-if="taskCommentStore.task_comments.length > 0"
-                >
-                    <div
-                        v-for="comment in taskCommentStore.task_comments"
-                        class="comment"
-                    >
-                        <div class="comment-header">
-                            <p>{{ comment.user.name }}</p>
-                            <span
-                                v-if="
-                                    taskCommentStore.authStore.user.id ===
-                                    comment.user.id
-                                "
-                                @click="
-                                    taskCommentStore.deleteTaskComment(
-                                        comment.id
-                                    )
-                                "
-                                >X</span
-                            >
-                        </div>
-
-                        <div class="comment-footer">
-                            <p>{{ comment.comment }}</p>
-                            <span>{{ comment.created_at }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Thông báo -->
-                <div class="alert alert-success text-center" v-else>
-                    Chưa có bình luận nào!
-                </div>
-
-                <!-- Message  -->
-                <div class="button">
-                    <input
-                        class="form-control"
-                        type="text"
-                        v-model="taskCommentStore.task_comment"
-                    />
-                    <button
-                        class="btn btn-primary"
-                        @click="
-                            taskCommentStore.createTaskComment(
-                                taskStore.taskDetail.id
-                            )
-                        "
-                    >
-                        Gửi
-                    </button>
-                </div>
-            </div>
-
             <!-- File liên quan đến nhiệm vụ -->
             <div class="col-lg-4 col-md-4 file-task">
                 <div class="task-files">
@@ -333,6 +272,117 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Lịch sử thay đổi trạng thái -->
+            <div class="col-lg-4 col-md-4 task-log">
+                <div class="dots-list">
+                    <h3>Lịch sử thay đổi trạng thái</h3>
+
+                    <!-- Thông báo -->
+                    <div
+                        class="alert alert-success text-center"
+                        v-if="taskLogStore.taskLogs.length == 0"
+                    >
+                        Chưa có lịch sử thay đổi trạng thái nào!
+                    </div>
+
+                    <ol v-else>
+                        <li v-for="log in taskLogStore.taskLogs">
+                            <div class="log">
+                                <span class="date">{{ log.created_at }}</span>
+                                <span
+                                    :class="
+                                        taskStore.getClassByStatus(
+                                            log.old_status
+                                        )
+                                    "
+                                >
+                                    {{ log.old_status }}
+                                </span>
+                                <span
+                                    ><i
+                                        class="fa-solid fa-arrow-right"
+                                        style="color: #74c0fc"
+                                    ></i
+                                ></span>
+                                <span
+                                    :class="
+                                        taskStore.getClassByStatus(
+                                            log.new_status
+                                        )
+                                    "
+                                >
+                                    {{ log.new_status }}
+                                </span>
+                                <span class="user">{{ log.user.name }}</span>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Bình luận liên quan -->
+            <div class="col-lg-12 col-md-12 comment-task">
+                <h3>Bình luận</h3>
+
+                <!-- Comments -->
+                <div
+                    class="content"
+                    v-if="taskCommentStore.task_comments.length > 0"
+                >
+                    <div
+                        v-for="comment in taskCommentStore.task_comments"
+                        class="comment"
+                    >
+                        <div class="comment-header">
+                            <p>{{ comment.user.name }}</p>
+                            <span
+                                v-if="
+                                    taskCommentStore.authStore.user.id ===
+                                    comment.user.id
+                                "
+                                @click="
+                                    taskCommentStore.deleteTaskComment(
+                                        comment.id
+                                    )
+                                "
+                                >X</span
+                            >
+                        </div>
+
+                        <div class="comment-footer">
+                            <p>{{ comment.comment }}</p>
+                            <span>{{ comment.created_at }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thông báo -->
+                <div class="alert alert-success text-center" v-else>
+                    Chưa có bình luận nào!
+                </div>
+
+                <!-- Message  -->
+                <div class="button">
+                    <input
+                        class="form-control"
+                        type="text"
+                        v-model="taskCommentStore.task_comment"
+                    />
+                    <button
+                        class="btn btn-primary"
+                        @click="
+                            taskCommentStore.createTaskComment(
+                                taskStore.taskDetail.id
+                            )
+                        "
+                    >
+                        Gửi
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -341,12 +391,14 @@
 import { useTaskStore } from "../../stores/taskStore";
 import { useTaskAttachmentStore } from "../../stores/taskAttachmentStore";
 import { useTaskCommentStore } from "../../stores/taskCommentStore";
+import { useTaskLogStore } from "../../stores/taskLogStore";
 
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
 const taskStore = useTaskStore();
 const taskAttachmentStore = useTaskAttachmentStore();
 const taskCommentStore = useTaskCommentStore();
+const taskLogStore = useTaskLogStore();
 
 // Upload file
 const fileInput = ref(null);
@@ -367,6 +419,9 @@ onMounted(() => {
 
     // Lấy danh sách comment liên quan
     taskCommentStore.getTaskCommentsByTaskId(taskStore.taskDetail.id);
+
+    // Lấy danh sách lịch sử thay đổi trạng thái
+    taskLogStore.getTaskLogsByTaskId(taskStore.taskDetail.id);
 
     // Lắng nghe sự kiện task attachment created
     taskAttachmentStore.eventStore.listenToEvent(
@@ -430,8 +485,8 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     // Clear store
-
     taskAttachmentStore.clearTaskAttachmentStore();
     taskCommentStore.clearTaskCommentStore();
+    taskLogStore.clearTaskLogsStore();
 });
 </script>
