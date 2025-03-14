@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if(!Auth::check()){
+    if (!Auth::check()) {
         return view('welcome');
     }
     return redirect()->route('spa');
 });
 
 // Nhóm route authentication vẫn hoạt động bình thường
-Route::middleware(['auth','verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/spa', function () {
         return view('dashboard'); // Trang Vue gốc
     })->name('spa');
@@ -35,32 +35,32 @@ Route::middleware('auth')->group(function () {
 });
 
 // Call Api
-Route::middleware('auth')->group(function(){
+Route::middleware('auth')->group(function () {
     // Users
     Route::resource('users', UserController::class);
-    Route::get('/managers', [UserController::class,'getManagers']);
-    Route::get('/employees', [UserController::class,'getEmployees']);
-    Route::post('/user/change-password/{id}', [UserController::class,'changePassword']);
+    Route::get('/managers', [UserController::class, 'getManagers']);
+    Route::get('/employees', [UserController::class, 'getEmployees']);
+    Route::post('/user/change-password/{id}', [UserController::class, 'changePassword']);
 
     // Projects
     Route::resource('projects', ProjectController::class);
-    Route::get('/projects-by-manager-pagination/{id}', [ProjectController::class,'getProjectByManagerPagination']);
-    Route::get('/projects-by-manager/{id}', [ProjectController::class,'getProjectByManager']);
-    Route::get('/projects-by-employee/{id}', [ProjectController::class,'getProjectByEmployee']);
-    Route::get('/projects-progress', [ProjectController::class,'getProjectProgress']);
-    
+    Route::get('/projects-by-manager-pagination/{id}', [ProjectController::class, 'getProjectByManagerPagination']);
+    Route::get('/projects-by-manager/{id}', [ProjectController::class, 'getProjectByManager']);
+    Route::get('/projects-by-employee/{id}', [ProjectController::class, 'getProjectByEmployee']);
+    Route::get('/projects-progress', [ProjectController::class, 'getProjectProgress']);
+
     // Tasks
-    Route::resource('/tasks',TaskController::class);
-    Route::get('/tasks-by-manager/{id}',[TaskController::class,'getTasksByManager']);
-    Route::get('/tasks-by-employee/{id}',[TaskController::class,'getTasksByEmployee']);
-    Route::post('/update-task-status/{id}',[TaskController::class,'updateTaskStatus']);
-    Route::post('/update-task-priority/{id}',[TaskController::class,'updateTaskPriority']);
+    Route::resource('/tasks', TaskController::class);
+    Route::get('/tasks-by-manager/{id}', [TaskController::class, 'getTasksByManager']);
+    Route::get('/tasks-by-employee/{id}', [TaskController::class, 'getTasksByEmployee']);
+    Route::post('/update-task-status/{id}', [TaskController::class, 'updateTaskStatus']);
+    Route::post('/update-task-priority/{id}', [TaskController::class, 'updateTaskPriority']);
 
     // Task Attachment
     Route::resource('task-attachments', TaskAttachmentController::class);
-    Route::get('/task-attachments-by-task-id/{id}',[TaskAttachmentController::class, 'getTaskAttachmentsByTaskId']);
-    Route::get('/task-attachments-by-project/{id}',[TaskAttachmentController::class, 'getTaskAttachmentsByProjectId']);
-    Route::post('/task-attachments-file-confrim/{id}',[TaskAttachmentController::class, 'fileConfrim']);
+    Route::get('/task-attachments-by-task-id/{id}', [TaskAttachmentController::class, 'getTaskAttachmentsByTaskId']);
+    Route::get('/task-attachments-by-project/{id}', [TaskAttachmentController::class, 'getTaskAttachmentsByProjectId']);
+    Route::post('/task-attachments-file-confrim/{id}', [TaskAttachmentController::class, 'fileConfrim']);
 
     // Task Comment
     Route::resource('task-comments', TaskCommentController::class);
@@ -71,4 +71,4 @@ Route::middleware('auth')->group(function(){
     Route::get('task-logs-by-task-id/{id}', [TaskLogController::class, 'getTaskLogByTaskId']);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

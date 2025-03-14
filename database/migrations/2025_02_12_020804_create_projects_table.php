@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->unsignedInteger('id')->primary()->autoIncrement();
-            $table->string('name',200);
+            $table->string('name', 200);
             $table->text('description');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('status',11)->default('pending');
+            $table->string('status', 11)->default('pending');
             $table->unsignedInteger('manager_id');
             $table->timestamps();
 
-            $table->foreign('manager_id')->references('id')->on('users');
+            $table->foreign('manager_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

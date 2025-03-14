@@ -12,6 +12,13 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
+                'name' => 'Admin',
+                'email' => 'admin@gmail.com',
+                'email_verified_at' => time(),
+                'password' => bcrypt('@dmin123'),
+                'role' => 'admin'
+            ],
+            [
                 'name' => 'Nguyễn Văn A',
                 'email' => 'nguyenvana@gmail.com',
                 'email_verified_at' => time(),
@@ -124,11 +131,11 @@ class UserSeeder extends Seeder
                 'role' => fake()->randomElement(['manager', 'employee'])
             ],
             [
-                'name' => 'Khúc Văn Q',
-                'email' => 'khucvanq@gmail.com',
+                'name' => 'Thanh Danh',
+                'email' => 'danhcg126@gmail.com',
                 'email_verified_at' => time(),
                 'password' => bcrypt('123456789'),
-                'role' => fake()->randomElement(['manager', 'employee'])
+                'role' => 'employee'
             ],
         ];
 

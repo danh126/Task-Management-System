@@ -23,7 +23,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Xây dựng ứng dụng di động',
@@ -31,7 +31,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Hệ thống quản lý nhân sự',
@@ -39,7 +39,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Tích hợp thanh toán VNPay',
@@ -47,7 +47,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Xây dựng hệ thống CRM',
@@ -55,7 +55,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Phát triển chatbot hỗ trợ khách hàng',
@@ -63,7 +63,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Nâng cấp bảo mật hệ thống',
@@ -71,7 +71,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Tối ưu hóa tốc độ website',
@@ -79,7 +79,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Phát triển hệ thống báo cáo tự động',
@@ -87,7 +87,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Nghiên cứu và triển khai AI vào sản phẩm',
@@ -95,7 +95,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Phát triển hệ thống ERP',
@@ -103,7 +103,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Triển khai hệ thống e-learning',
@@ -111,7 +111,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Phát triển chatbot tư vấn tài chính',
@@ -119,7 +119,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Nâng cấp hệ thống quản lý kho hàng',
@@ -127,7 +127,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Xây dựng ứng dụng đặt lịch hẹn',
@@ -135,7 +135,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Tích hợp AI vào chăm sóc khách hàng',
@@ -143,7 +143,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Phát triển nền tảng thương mại điện tử B2B',
@@ -151,7 +151,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Xây dựng hệ thống chấm công bằng vân tay',
@@ -159,7 +159,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Nâng cấp giao diện người dùng cho app di động',
@@ -167,7 +167,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
             [
                 'name' => 'Xây dựng nền tảng đặt vé trực tuyến',
@@ -175,7 +175,7 @@ class ProjectSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'status' => fake()->randomElement(['pending', 'in_progress', 'done']),
-                'manager_id' => fake()->randomElement([6, 7])
+                'manager_id' => fake()->randomElement([2, 3])
             ],
         ];
 

@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->unsignedInteger('id')->primary()->autoIncrement();
-            $table->string('title',150);
+            $table->string('title', 150);
             $table->text('description');
-            $table->string('status',11)->default('todo');
-            $table->string('priority');
+            $table->string('status', 11)->default('todo');
+            $table->string('priority')->default('medium');
             $table->unsignedTinyInteger('key_priority')->default(4);
             $table->date('due_date')->nullable();
             $table->unsignedInteger('project_id')->index();
             $table->unsignedInteger('assignee_id')->index();
             $table->timestamps();
 
-            $table->foreign('project_id')->references('id')->on('projects');
-            $table->foreign('assignee_id')->references('id')->on('users');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('assignee_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('task_notifications', function (Blueprint $table) {
             $table->unsignedInteger('id')->primary()->autoIncrement();
             $table->unsignedInteger('user_id')->index();
-            $table->string('message',200);
+            $table->string('message', 200);
             $table->tinyInteger('is_read')->default(0);
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
